@@ -1,0 +1,30 @@
+[project]
+name = "theme_studio"
+authors = [
+    { name = "Theme Studio", email = "hello@example.com" }
+]
+description = "A Shadcn-inspired theme manager for the Frappe Desk — preview, switch, and craft custom themes."
+requires-python = ">=3.10"
+readme = "README.md"
+dynamic = ["version"]
+dependencies = [
+    # "frappe" # not needed; the framework is provided by the bench
+]
+
+[build-system]
+requires = ["flit_core >=3.4,<4"]
+build-backend = "flit_core.buildapi"
+
+[tool.bench.frappe-dependencies]
+frappe = ">=15.0.0,<17.0.0"
+
+[tool.flit.module]
+name = "theme_studio"
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "tab"

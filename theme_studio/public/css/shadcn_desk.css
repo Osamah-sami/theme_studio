@@ -1,0 +1,288 @@
+/* =========================================================================
+   Theme Studio — Shadcn-inspired Frappe Desk theme
+   -------------------------------------------------------------------------
+   The boot loader sets the design tokens (--ts-*) on <html>. This stylesheet
+   maps those tokens onto Frappe's own CSS variables and refines components so
+   the Desk reads like a clean Shadcn UI. Scoped to [data-theme-studio] so the
+   stock look returns instantly when theming is disabled.
+   ========================================================================= */
+
+html[data-theme-studio] {
+	/* ---- Shadcn token defaults (overridden at runtime by the boot loader) -- */
+	--ts-background: #ffffff;
+	--ts-foreground: #09090b;
+	--ts-card: #ffffff;
+	--ts-card-foreground: #09090b;
+	--ts-popover: #ffffff;
+	--ts-popover-foreground: #09090b;
+	--ts-primary: #18181b;
+	--ts-primary-foreground: #fafafa;
+	--ts-secondary: #f4f4f5;
+	--ts-secondary-foreground: #18181b;
+	--ts-muted: #f4f4f5;
+	--ts-muted-foreground: #71717a;
+	--ts-accent: #f4f4f5;
+	--ts-accent-foreground: #18181b;
+	--ts-destructive: #ef4444;
+	--ts-destructive-foreground: #fafafa;
+	--ts-border: #e4e4e7;
+	--ts-input: #e4e4e7;
+	--ts-ring: #a1a1aa;
+	--ts-radius: 0.5rem;
+
+	/* ---- Bridge: Frappe variables <- Theme Studio tokens ------------------ */
+	--bg-color: var(--ts-background);
+	--fg-color: var(--ts-card);
+	--card-bg: var(--ts-card);
+	--control-bg: var(--ts-secondary);
+	--control-bg-on-gray: var(--ts-muted);
+	--subtle-fg: var(--ts-muted);
+	--subtle-accent: var(--ts-accent);
+	--fg-hover-color: var(--ts-accent);
+	--disabled-control-bg: var(--ts-muted);
+
+	--text-color: var(--ts-foreground);
+	--text-on-light-gray: var(--ts-foreground);
+	--heading-color: var(--ts-foreground);
+	--text-muted: var(--ts-muted-foreground);
+	--text-light: var(--ts-muted-foreground);
+	--invert-fg-color: var(--ts-primary-foreground);
+
+	--border-color: var(--ts-border);
+	--dark-border-color: var(--ts-border);
+	--table-border-color: var(--ts-border);
+
+	--primary: var(--ts-primary);
+	--primary-color: var(--ts-primary);
+	--btn-primary: var(--ts-primary);
+
+	--navbar-bg: var(--ts-card);
+	--sidebar-bg: var(--ts-background);
+	--modal-bg: var(--ts-popover);
+	--popover-bg: var(--ts-popover);
+	--awesomplete-hover-bg: var(--ts-accent);
+
+	--blue-500: var(--ts-ring);
+	--red-500: var(--ts-destructive);
+
+	/* radius scale */
+	--border-radius: var(--ts-radius);
+	--border-radius-sm: calc(var(--ts-radius) - 0.125rem);
+	--border-radius-md: var(--ts-radius);
+	--border-radius-lg: calc(var(--ts-radius) + 0.125rem);
+
+	background-color: var(--ts-background);
+	color: var(--ts-foreground);
+}
+
+/* ---- Typography --------------------------------------------------------- */
+html[data-theme-studio] body,
+html[data-theme-studio] .page-container,
+html[data-theme-studio] input,
+html[data-theme-studio] button,
+html[data-theme-studio] select,
+html[data-theme-studio] textarea {
+	font-family: var(--ts-font-family, "Inter"), -apple-system, BlinkMacSystemFont,
+		"Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+html[data-theme-studio] body {
+	background-color: var(--ts-background);
+	color: var(--ts-foreground);
+	-webkit-font-smoothing: antialiased;
+	letter-spacing: -0.006em;
+}
+
+html[data-theme-studio] h1,
+html[data-theme-studio] h2,
+html[data-theme-studio] h3,
+html[data-theme-studio] h4,
+html[data-theme-studio] .page-title .title-text,
+html[data-theme-studio] .ellipsis {
+	color: var(--ts-foreground);
+	letter-spacing: -0.02em;
+	font-weight: 600;
+}
+
+/* ---- Top navbar --------------------------------------------------------- */
+html[data-theme-studio] .navbar {
+	background-color: var(--ts-card);
+	border-bottom: 1px solid var(--ts-border);
+	box-shadow: none;
+	backdrop-filter: saturate(1.1);
+}
+
+html[data-theme-studio] .navbar .navbar-nav .nav-link {
+	color: var(--ts-muted-foreground);
+	border-radius: var(--ts-radius);
+}
+html[data-theme-studio] .navbar .navbar-nav .nav-link:hover {
+	color: var(--ts-foreground);
+	background-color: var(--ts-accent);
+}
+
+/* ---- Sidebar ------------------------------------------------------------ */
+html[data-theme-studio] .layout-side-section,
+html[data-theme-studio] .desk-sidebar {
+	background-color: var(--ts-background);
+}
+
+html[data-theme-studio] .desk-sidebar .sidebar-item-container .desk-sidebar-item {
+	border-radius: var(--ts-radius);
+	color: var(--ts-muted-foreground);
+	margin: 1px 4px;
+	transition: background-color 0.12s ease, color 0.12s ease;
+}
+html[data-theme-studio] .desk-sidebar .sidebar-item-container .desk-sidebar-item:hover {
+	background-color: var(--ts-accent);
+	color: var(--ts-foreground);
+}
+html[data-theme-studio]
+	.desk-sidebar
+	.sidebar-item-container.selected
+	> .desk-sidebar-item {
+	background-color: var(--ts-secondary);
+	color: var(--ts-secondary-foreground);
+	font-weight: 500;
+}
+
+/* ---- Cards & containers ------------------------------------------------- */
+html[data-theme-studio] .widget,
+html[data-theme-studio] .form-section,
+html[data-theme-studio] .form-page,
+html[data-theme-studio] .frappe-card,
+html[data-theme-studio] .new-timeline .timeline-items,
+html[data-theme-studio] .layout-main-section {
+	background-color: var(--ts-card);
+	border: 1px solid var(--ts-border);
+	border-radius: var(--ts-radius);
+	box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+}
+
+html[data-theme-studio] .form-tabs-list,
+html[data-theme-studio] .page-head {
+	background-color: var(--ts-background);
+	border-bottom: 1px solid var(--ts-border);
+}
+
+/* ---- Buttons ------------------------------------------------------------ */
+html[data-theme-studio] .btn {
+	border-radius: var(--ts-radius);
+	font-weight: 500;
+	box-shadow: none;
+	transition: background-color 0.12s ease, border-color 0.12s ease, opacity 0.12s ease;
+}
+
+html[data-theme-studio] .btn-primary,
+html[data-theme-studio] .btn-modal-primary {
+	background-color: var(--ts-primary);
+	border-color: var(--ts-primary);
+	color: var(--ts-primary-foreground);
+}
+html[data-theme-studio] .btn-primary:hover,
+html[data-theme-studio] .btn-primary:focus {
+	background-color: var(--ts-primary);
+	border-color: var(--ts-primary);
+	color: var(--ts-primary-foreground);
+	opacity: 0.9;
+}
+
+html[data-theme-studio] .btn-default,
+html[data-theme-studio] .btn-secondary {
+	background-color: var(--ts-card);
+	border: 1px solid var(--ts-border);
+	color: var(--ts-foreground);
+}
+html[data-theme-studio] .btn-default:hover,
+html[data-theme-studio] .btn-secondary:hover {
+	background-color: var(--ts-accent);
+	color: var(--ts-accent-foreground);
+}
+
+html[data-theme-studio] .btn-danger {
+	background-color: var(--ts-destructive);
+	border-color: var(--ts-destructive);
+	color: var(--ts-destructive-foreground);
+}
+
+/* ---- Inputs ------------------------------------------------------------- */
+html[data-theme-studio] .form-control,
+html[data-theme-studio] .input-with-feedback,
+html[data-theme-studio] .like-disabled-input,
+html[data-theme-studio] select.form-control {
+	background-color: var(--ts-background);
+	border: 1px solid var(--ts-input);
+	border-radius: var(--ts-radius);
+	color: var(--ts-foreground);
+	box-shadow: none;
+}
+html[data-theme-studio] .form-control:focus {
+	border-color: var(--ts-ring);
+	box-shadow: 0 0 0 2px color-mix(in srgb, var(--ts-ring) 35%, transparent);
+	outline: none;
+}
+html[data-theme-studio] .form-control::placeholder {
+	color: var(--ts-muted-foreground);
+}
+
+/* ---- Tables / list view ------------------------------------------------- */
+html[data-theme-studio] .list-row-container,
+html[data-theme-studio] .list-row-head,
+html[data-theme-studio] .report-wrapper {
+	background-color: var(--ts-card);
+	border-color: var(--ts-border);
+}
+html[data-theme-studio] .list-row:hover,
+html[data-theme-studio] .list-row-container:hover {
+	background-color: var(--ts-accent);
+}
+html[data-theme-studio] .list-row-head {
+	color: var(--ts-muted-foreground);
+	text-transform: none;
+	letter-spacing: 0;
+}
+
+/* ---- Badges / indicators / tags ---------------------------------------- */
+html[data-theme-studio] .indicator-pill,
+html[data-theme-studio] .badge {
+	border-radius: 9999px;
+	font-weight: 500;
+	border: 1px solid var(--ts-border);
+}
+
+/* ---- Modals & popovers -------------------------------------------------- */
+html[data-theme-studio] .modal-content,
+html[data-theme-studio] .dropdown-menu,
+html[data-theme-studio] .awesomplete > ul {
+	background-color: var(--ts-popover);
+	color: var(--ts-popover-foreground);
+	border: 1px solid var(--ts-border);
+	border-radius: var(--ts-radius);
+	box-shadow: 0 10px 30px -12px rgb(0 0 0 / 0.25);
+}
+html[data-theme-studio] .dropdown-item:hover,
+html[data-theme-studio] .dropdown-item:focus {
+	background-color: var(--ts-accent);
+	color: var(--ts-accent-foreground);
+}
+
+/* ---- Links & primary accents ------------------------------------------- */
+html[data-theme-studio] a,
+html[data-theme-studio] .text-primary {
+	color: var(--ts-primary);
+}
+
+/* ---- Scrollbar polish --------------------------------------------------- */
+html[data-theme-studio] ::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+}
+html[data-theme-studio] ::-webkit-scrollbar-thumb {
+	background-color: color-mix(in srgb, var(--ts-muted-foreground) 35%, transparent);
+	border-radius: 9999px;
+	border: 2px solid transparent;
+	background-clip: padding-box;
+}
+html[data-theme-studio] ::-webkit-scrollbar-track {
+	background: transparent;
+}

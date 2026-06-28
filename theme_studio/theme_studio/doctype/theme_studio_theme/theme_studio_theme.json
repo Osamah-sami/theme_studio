@@ -1,0 +1,241 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:theme_name",
+ "creation": "2026-01-01 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "theme_name",
+  "appearance",
+  "is_preset",
+  "column_break_meta",
+  "font_family",
+  "radius",
+  "core_section",
+  "background",
+  "foreground",
+  "card",
+  "card_foreground",
+  "popover",
+  "popover_foreground",
+  "column_break_core",
+  "primary",
+  "primary_foreground",
+  "secondary",
+  "secondary_foreground",
+  "muted",
+  "muted_foreground",
+  "support_section",
+  "accent",
+  "accent_foreground",
+  "destructive",
+  "destructive_foreground",
+  "column_break_support",
+  "border",
+  "input",
+  "ring",
+  "advanced_section",
+  "tokens_json"
+ ],
+ "fields": [
+  {
+   "fieldname": "theme_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Theme Name",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "default": "Light",
+   "fieldname": "appearance",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Appearance",
+   "options": "Light\nDark",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_preset",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Is Preset",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_meta",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Inter",
+   "description": "Base font family used across the Desk.",
+   "fieldname": "font_family",
+   "fieldtype": "Data",
+   "label": "Font Family"
+  },
+  {
+   "default": "0.5rem",
+   "description": "Base corner radius, e.g. 0.5rem.",
+   "fieldname": "radius",
+   "fieldtype": "Data",
+   "label": "Radius"
+  },
+  {
+   "fieldname": "core_section",
+   "fieldtype": "Section Break",
+   "label": "Core Colors"
+  },
+  {
+   "fieldname": "background",
+   "fieldtype": "Color",
+   "label": "Background"
+  },
+  {
+   "fieldname": "foreground",
+   "fieldtype": "Color",
+   "label": "Foreground"
+  },
+  {
+   "fieldname": "card",
+   "fieldtype": "Color",
+   "label": "Card"
+  },
+  {
+   "fieldname": "card_foreground",
+   "fieldtype": "Color",
+   "label": "Card Foreground"
+  },
+  {
+   "fieldname": "popover",
+   "fieldtype": "Color",
+   "label": "Popover"
+  },
+  {
+   "fieldname": "popover_foreground",
+   "fieldtype": "Color",
+   "label": "Popover Foreground"
+  },
+  {
+   "fieldname": "column_break_core",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "primary",
+   "fieldtype": "Color",
+   "in_list_view": 1,
+   "label": "Primary"
+  },
+  {
+   "fieldname": "primary_foreground",
+   "fieldtype": "Color",
+   "label": "Primary Foreground"
+  },
+  {
+   "fieldname": "secondary",
+   "fieldtype": "Color",
+   "label": "Secondary"
+  },
+  {
+   "fieldname": "secondary_foreground",
+   "fieldtype": "Color",
+   "label": "Secondary Foreground"
+  },
+  {
+   "fieldname": "muted",
+   "fieldtype": "Color",
+   "label": "Muted"
+  },
+  {
+   "fieldname": "muted_foreground",
+   "fieldtype": "Color",
+   "label": "Muted Foreground"
+  },
+  {
+   "fieldname": "support_section",
+   "fieldtype": "Section Break",
+   "label": "Support Colors"
+  },
+  {
+   "fieldname": "accent",
+   "fieldtype": "Color",
+   "label": "Accent"
+  },
+  {
+   "fieldname": "accent_foreground",
+   "fieldtype": "Color",
+   "label": "Accent Foreground"
+  },
+  {
+   "fieldname": "destructive",
+   "fieldtype": "Color",
+   "label": "Destructive"
+  },
+  {
+   "fieldname": "destructive_foreground",
+   "fieldtype": "Color",
+   "label": "Destructive Foreground"
+  },
+  {
+   "fieldname": "column_break_support",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "border",
+   "fieldtype": "Color",
+   "label": "Border"
+  },
+  {
+   "fieldname": "input",
+   "fieldtype": "Color",
+   "label": "Input"
+  },
+  {
+   "fieldname": "ring",
+   "fieldtype": "Color",
+   "label": "Ring"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "advanced_section",
+   "fieldtype": "Section Break",
+   "label": "Advanced"
+  },
+  {
+   "description": "Optional raw JSON of extra CSS custom properties (without the leading --). Overrides the fields above.",
+   "fieldname": "tokens_json",
+   "fieldtype": "Code",
+   "label": "Extra Tokens (JSON)",
+   "options": "JSON"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Theme Studio",
+ "name": "Theme Studio Theme",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
