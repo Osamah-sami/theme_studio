@@ -287,6 +287,22 @@ class ThemeStudio {
 						<input class="ts-input ts-f-radius" value="${frappe.utils.escape_html(e ? e.radius || "" : "")}" ${isPreset ? "disabled" : ""}/>
 					</div>
 				</div>
+				<div class="ts-smart ${isPreset ? "is-disabled" : ""}">
+					<div class="ts-smart-head">
+						<div>
+							<div class="ts-group-title" style="margin:0;">${__("Smart Generate")}</div>
+							<div class="ts-smart-sub">${__("Pick one primary color — we build the whole palette in OKLCH.")}</div>
+						</div>
+					</div>
+					<div class="ts-smart-row">
+						<label class="ts-smart-swatch" title="${__("Primary color")}">
+							<input type="color" class="ts-gen-primary" value="${frappe.utils.escape_html(e ? e.primary_seed || "#18181b" : "#18181b")}" ${isPreset ? "disabled" : ""}/>
+						</label>
+						<input class="ts-input ts-gen-hex" value="${frappe.utils.escape_html(e ? e.primary_seed || "#18181b" : "#18181b")}" ${isPreset ? "disabled" : ""}/>
+						<button class="ts-btn ts-btn-primary ts-gen-btn" ${isPreset ? "disabled" : ""}>${__("Generate Palette")}</button>
+						<button class="ts-btn ts-gendark-btn" ${isPreset ? "disabled" : ""}>${__("Save Matching Dark")}</button>
+					</div>
+				</div>
 				<div class="ts-tokens"></div>
 				<div class="ts-toolbar" style="margin-top:18px;">
 					${isPreset
@@ -357,6 +373,23 @@ class ThemeStudio {
 				? window.theme_studio.preview(this.payload_of(this.editing))
 				: window.theme_studio.cancelPreview();
 		});
+
+		// Smart Generate bindings.
+		const $genColor = $p.find(".ts-gen-primary");
+		const $genHex = $p.find(".ts-gen-hex");
+		$genColor.on("input", () => {
+			$genHex.val($genColor.val());
+			this.editing.primary_seed = $genColor.val();
+		});
+		$genHex.on("change", () => {
+			const v = $genHex.val().trim();
+			if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(v)) {
+				$genColor.val(v);
+				this.editing.primary_seed = v;
+			}
+		});
+		$p.find(".ts-gen-btn").on("click", () => this.generate_palette());
+		$p.find(".ts-gendark-btn").on("click", () => this.generate_dark_theme());
 
 		$p.find(".ts-save-btn").on("click", () => this.save_theme(false));
 		$p.find(".ts-saveapply-btn").on("click", () => this.save_theme(true));
@@ -435,6 +468,75 @@ class ThemeStudio {
 		this.refresh_live();
 	}
 
+	/** Build a complete token set from the chosen primary color (OKLCH). */
+	generate_palette() {
+		const engine = window.theme_studio_color;
+		if (!engine) {
+			frappe.msgprint(__("Color engine is not loaded yet — please reload the page."));
+			return;
+		}
+		const primary = (this.editing.primary_seed || "#18181b").trim();
+		if (!/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(primary)) {
+			frappe.msgprint(__("Please enter a valid primary color (e.g. #2563eb)."));
+			return;
+		}
+		const generated = engine.generate(primary, this.editing.appearance || "Light");
+		// Replace every token (core + sidebar-* + chart-*) with the generated set.
+		this.editing.tokens = Object.assign({}, this.editing.tokens, generated);
+		this.editing.primary_seed = primary;
+		frappe.show_alert({
+			message: __("Generated a {0} palette from {1}.", [
+				(this.editing.appearance || "Light").toLowerCase(),
+				primary,
+			]),
+			indicator: "green",
+		});
+		// Re-render so the token grid reflects the new values, then live-preview.
+		this.render();
+		if (this.previewOnDesk) {
+			window.theme_studio.preview(this.payload_of(this.editing));
+		}
+	}
+
+	/** Create and persist a matching dark theme from the same primary color. */
+	generate_dark_theme() {
+		const engine = window.theme_studio_color;
+		if (!engine) {
+			frappe.msgprint(__("Color engine is not loaded yet — please reload the page."));
+			return;
+		}
+		const primary = (this.editing.primary_seed || "#18181b").trim();
+		if (!/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(primary)) {
+			frappe.msgprint(__("Please enter a valid primary color first."));
+			return;
+		}
+		const baseName = (this.editing.theme_name || __("Custom Theme")).replace(/\s*Dark$/i, "").trim();
+		const tokens = engine.generate(primary, "Dark");
+		const extras = {};
+		Object.keys(tokens).forEach((k) => {
+			if (ALL_TOKEN_KEYS.indexOf(k) === -1) extras[k] = tokens[k];
+		});
+		const darkTheme = {
+			name: null,
+			theme_name: baseName + " Dark",
+			appearance: "Dark",
+			font_family: this.editing.font_family || "Inter",
+			radius: this.editing.radius || "0.5rem",
+			is_preset: 0,
+			tokens,
+			tokens_json: Object.keys(extras).length ? JSON.stringify(extras, null, 2) : "",
+		};
+		frappe
+			.xcall("theme_studio.api.save_theme", { theme: JSON.stringify(darkTheme) })
+			.then((saved) => {
+				frappe.show_alert({
+					message: __("Saved matching dark theme “{0}”.", [saved.theme_name]),
+					indicator: "green",
+				});
+				this.refresh();
+			});
+	}
+
 	refresh_live() {
 		this.render_mock();
 		if (this.previewOnDesk) {
@@ -461,11 +563,22 @@ class ThemeStudio {
 				font_family: (seed && seed.font_family) || "Inter",
 				radius: (seed && seed.radius) || "0.5rem",
 				is_preset: 0,
+				primary_seed: tokens["primary"] || "#18181b",
 				tokens,
 			};
 		}
 		const tokens = {};
+		// Core tokens (always shown in the grid).
 		ALL_TOKEN_KEYS.forEach((k) => (tokens[k] = (theme.tokens && theme.tokens[k]) || "#888888"));
+		// Preserve any generated extras (sidebar-*, chart-*, …) so previews and
+		// re-saves keep them intact.
+		if (theme.tokens) {
+			Object.keys(theme.tokens).forEach((k) => {
+				if (ALL_TOKEN_KEYS.indexOf(k) === -1 && k !== "radius" && k !== "font-family") {
+					tokens[k] = theme.tokens[k];
+				}
+			});
+		}
 		return {
 			name: theme.name,
 			theme_name: theme.theme_name,
@@ -473,6 +586,7 @@ class ThemeStudio {
 			font_family: theme.font_family,
 			radius: theme.radius,
 			is_preset: theme.is_preset,
+			primary_seed: tokens["primary"] || "#18181b",
 			tokens,
 		};
 	}
@@ -505,8 +619,18 @@ class ThemeStudio {
 			frappe.msgprint(__("Please enter a theme name."));
 			return;
 		}
+		// Persist generated extras (sidebar-*, chart-*, …) via the JSON field.
+		const extras = {};
+		Object.keys(e.tokens || {}).forEach((k) => {
+			if (ALL_TOKEN_KEYS.indexOf(k) === -1 && k !== "radius" && k !== "font-family") {
+				extras[k] = e.tokens[k];
+			}
+		});
+		const payload = Object.assign({}, e, {
+			tokens_json: Object.keys(extras).length ? JSON.stringify(extras, null, 2) : "",
+		});
 		frappe
-			.xcall("theme_studio.api.save_theme", { theme: JSON.stringify(e) })
+			.xcall("theme_studio.api.save_theme", { theme: JSON.stringify(payload) })
 			.then((saved) => {
 				frappe.show_alert({ message: __("Saved “{0}”.", [saved.theme_name]), indicator: "green" });
 				this.editing = this.clone_for_edit(saved);

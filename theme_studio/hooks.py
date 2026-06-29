@@ -19,6 +19,7 @@ app_include_css = [
 	"/assets/theme_studio/css/shadcn_desk.css",
 ]
 app_include_js = [
+	"/assets/theme_studio/js/theme_studio_color_engine.js",
 	"/assets/theme_studio/js/theme_studio_boot.js",
 ]
 
