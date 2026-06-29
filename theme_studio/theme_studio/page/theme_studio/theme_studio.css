@@ -49,6 +49,58 @@
 	margin-bottom: 16px;
 }
 
+/* ---- Gallery tools (search + filter) ------------------------------------ */
+.theme-studio-page .ts-gallery-tools {
+	display: flex;
+	gap: 10px;
+	align-items: center;
+	flex-wrap: wrap;
+	margin-bottom: 14px;
+}
+.theme-studio-page .ts-search {
+	position: relative;
+	flex: 1;
+	min-width: 160px;
+}
+.theme-studio-page .ts-search-icon {
+	position: absolute;
+	left: 10px;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 15px;
+	height: 15px;
+	color: var(--ts-page-muted-fg);
+	pointer-events: none;
+}
+.theme-studio-page .ts-gallery-search {
+	padding-left: 32px;
+}
+.theme-studio-page .ts-filter-chips {
+	display: flex;
+	gap: 6px;
+	flex-shrink: 0;
+}
+.theme-studio-page .ts-chip-btn {
+	font-size: 12px;
+	font-weight: 500;
+	padding: 6px 12px;
+	border-radius: 9999px;
+	border: 1px solid var(--ts-page-border);
+	background: var(--ts-card, #fff);
+	color: var(--ts-page-muted-fg);
+	cursor: pointer;
+	transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+.theme-studio-page .ts-chip-btn:hover {
+	background: var(--ts-accent, #f4f4f5);
+	color: var(--ts-foreground, #09090b);
+}
+.theme-studio-page .ts-chip-btn.is-active {
+	background: var(--ts-primary, #18181b);
+	border-color: var(--ts-primary, #18181b);
+	color: var(--ts-primary-foreground, #fafafa);
+}
+
 /* ---- Theme gallery ------------------------------------------------------ */
 .theme-studio-page .ts-grid {
 	display: grid;

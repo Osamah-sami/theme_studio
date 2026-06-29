@@ -56,6 +56,8 @@ class ThemeStudio {
 		this.context = {};
 		this.editing = null;
 		this.previewOnDesk = false;
+		this.galleryQuery = "";
+		this.galleryFilter = "all"; // all | Light | Dark
 
 		this.$body = $('<div class="theme-studio-page">').appendTo(page.body);
 		this.setup_actions();
@@ -77,6 +79,80 @@ class ThemeStudio {
 					this.refresh();
 				});
 		});
+		this.page.add_inner_button(__("Import Theme"), () => this.import_theme());
+	}
+
+	/* ----------------------------------------------------------------- */
+	/* Import / Export                                                   */
+	/* ----------------------------------------------------------------- */
+	import_theme() {
+		const input = document.createElement("input");
+		input.type = "file";
+		input.accept = "application/json,.json";
+		input.addEventListener("change", () => {
+			const file = input.files && input.files[0];
+			if (!file) return;
+			const reader = new FileReader();
+			reader.onload = () => {
+				let data;
+				try {
+					data = JSON.parse(reader.result);
+				} catch (err) {
+					frappe.msgprint(__("That file is not valid JSON."));
+					return;
+				}
+				if (!data || !data.tokens) {
+					frappe.msgprint(__("This file does not look like a Theme Studio theme."));
+					return;
+				}
+				// Force a fresh, editable (non-preset) theme on import.
+				const extras = {};
+				Object.keys(data.tokens).forEach((k) => {
+					if (ALL_TOKEN_KEYS.indexOf(k) === -1) extras[k] = data.tokens[k];
+				});
+				const payload = {
+					name: null,
+					theme_name: (data.theme_name || __("Imported Theme")) + " (Imported)",
+					appearance: data.appearance === "Dark" ? "Dark" : "Light",
+					font_family: data.font_family || "Inter",
+					radius: data.radius || "0.5rem",
+					is_preset: 0,
+					tokens: data.tokens,
+					tokens_json: Object.keys(extras).length ? JSON.stringify(extras, null, 2) : "",
+				};
+				frappe
+					.xcall("theme_studio.api.save_theme", { theme: JSON.stringify(payload) })
+					.then((saved) => {
+						frappe.show_alert({
+							message: __("Imported “{0}”.", [saved.theme_name]),
+							indicator: "green",
+						});
+						this.editing = this.clone_for_edit(saved);
+						this.refresh();
+					});
+			};
+			reader.readAsText(file);
+		});
+		input.click();
+	}
+
+	export_theme(theme) {
+		const data = {
+			theme_name: theme.theme_name,
+			appearance: theme.appearance,
+			font_family: theme.font_family,
+			radius: theme.radius,
+			tokens: theme.tokens || {},
+			exported_from: "Theme Studio",
+			exported_at: frappe.datetime.now_datetime(),
+		};
+		const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement("a");
+		a.href = url;
+		a.download = (theme.theme_name || "theme").replace(/[^a-z0-9]+/gi, "-").toLowerCase() + ".json";
+		a.click();
+		URL.revokeObjectURL(url);
 	}
 
 	async refresh() {
@@ -154,24 +230,75 @@ class ThemeStudio {
 	/* ----------------------------------------------------------------- */
 	render_gallery() {
 		const activeName = this.context.active && this.context.active.name;
+		const filters = ["all", "Light", "Dark"];
+		const filterLabels = { all: __("All"), Light: __("Light"), Dark: __("Dark") };
 		const $p = $(`
 			<div class="ts-panel">
 				<div class="ts-panel-head">
 					<div class="ts-panel-title">${__("Themes")}</div>
-					<span class="ts-badge">${this.themes.length} ${__("total")}</span>
+					<span class="ts-badge ts-count-badge">${this.themes.length} ${__("total")}</span>
 				</div>
 				<div class="ts-panel-sub">${__("Hover to preview on the Desk, click Apply to keep it.")}</div>
+				<div class="ts-gallery-tools">
+					<div class="ts-search">
+						<svg class="ts-search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+						<input type="search" class="ts-input ts-gallery-search" placeholder="${__("Search themes…")}" value="${frappe.utils.escape_html(this.galleryQuery)}"/>
+					</div>
+					<div class="ts-filter-chips">
+						${filters
+							.map(
+								(f) =>
+									`<button class="ts-chip-btn ${this.galleryFilter === f ? "is-active" : ""}" data-filter="${f}">${filterLabels[f]}</button>`
+							)
+							.join("")}
+					</div>
+				</div>
 				<div class="ts-grid"></div>
 			</div>
 		`).appendTo(this.$left);
 		const $grid = $p.find(".ts-grid");
+
+		// Wire search + filter controls.
+		const $search = $p.find(".ts-gallery-search");
+		$search.on("input", (e) => {
+			this.galleryQuery = e.target.value;
+			this.render_gallery_cards($grid, activeName);
+		});
+		$p.find(".ts-chip-btn").on("click", (e) => {
+			this.galleryFilter = $(e.currentTarget).data("filter");
+			$p.find(".ts-chip-btn").removeClass("is-active");
+			$(e.currentTarget).addClass("is-active");
+			this.render_gallery_cards($grid, activeName);
+		});
 
 		if (!this.themes.length) {
 			$grid.replaceWith('<div class="ts-empty">' + __("No themes yet.") + "</div>");
 			return;
 		}
 
-		this.themes.forEach((theme) => {
+		this.render_gallery_cards($grid, activeName);
+	}
+
+	filtered_themes() {
+		const q = (this.galleryQuery || "").toLowerCase().trim();
+		return this.themes.filter((theme) => {
+			const matchesFilter =
+				this.galleryFilter === "all" || theme.appearance === this.galleryFilter;
+			const matchesQuery =
+				!q || String(theme.theme_name || "").toLowerCase().indexOf(q) !== -1;
+			return matchesFilter && matchesQuery;
+		});
+	}
+
+	render_gallery_cards($grid, activeName) {
+		$grid.empty();
+		const themes = this.filtered_themes();
+		if (!themes.length) {
+			$grid.append('<div class="ts-empty">' + __("No themes match your search.") + "</div>");
+			return;
+		}
+
+		themes.forEach((theme) => {
 			const t = theme.tokens || {};
 			const isActive = theme.name === activeName;
 			const $card = $(`
@@ -221,6 +348,13 @@ class ThemeStudio {
 				.on("click", (e) => {
 					e.stopPropagation();
 					theme.is_preset ? this.duplicate_theme(theme) : this.open_editor(theme);
+				});
+
+			$('<button class="ts-btn ts-btn-sm" title="' + __("Export as JSON") + '">' + __("Export") + "</button>")
+				.appendTo($actions)
+				.on("click", (e) => {
+					e.stopPropagation();
+					this.export_theme(theme);
 				});
 
 			if (!theme.is_preset && this.context.can_manage) {

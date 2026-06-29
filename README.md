@@ -14,7 +14,14 @@ custom themes from a clean visual editor — all from a dedicated Desk page.
   workspaces, expand/collapse the rail (with search, drag-to-resize and hover
   tooltips), and the whole thing is styled purely with the Shadcn `--ts-sidebar-*`
   tokens — so it re-skins with the active theme. Works across every Frappe v16 app.
-- **Theme gallery** — every theme rendered as a live swatch card.
+  - **Keyboard & a11y** — rail items are focusable buttons (Enter/Space to switch),
+    the toggle exposes `aria-expanded`, and **Ctrl/Cmd + B** expands/collapses the rail.
+  - **Responsive** — on tablets the expanded rail floats as an overlay drawer with a
+    backdrop; on phones it slims to an icon-only rail with a wider panel.
+- **Theme gallery** — every theme rendered as a live swatch card, with a **search box**
+  and **Light / Dark / All filter chips** to find a theme fast.
+- **Import / Export** — export any theme to a `.json` file and import one back in as a
+  new editable theme (toolbar *Import Theme* button and per-card *Export*).
 - **Hover-to-preview** — hover a card to preview it on the actual Desk; click *Apply* to keep it.
 - **Per-user or site-wide** — users pick their own theme; admins set the site default.
 - **Theme editor** — tune all Shadcn design tokens (background, foreground, primary,
