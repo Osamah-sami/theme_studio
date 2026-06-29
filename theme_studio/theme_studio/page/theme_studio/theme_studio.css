@@ -240,6 +240,63 @@
 	box-shadow: 0 0 0 2px color-mix(in srgb, var(--ts-ring, #a1a1aa) 35%, transparent);
 }
 
+/* ---- Smart Generate ----------------------------------------------------- */
+.theme-studio-page .ts-smart {
+	margin-top: 18px;
+	border: 1px solid var(--ts-page-border);
+	border-radius: var(--ts-page-radius);
+	padding: 14px;
+	background: color-mix(in srgb, var(--ts-accent, #f4f4f5) 50%, var(--ts-card, #fff));
+}
+.theme-studio-page .ts-smart.is-disabled {
+	opacity: 0.55;
+	pointer-events: none;
+}
+.theme-studio-page .ts-smart-head {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 12px;
+	margin-bottom: 12px;
+}
+.theme-studio-page .ts-smart-sub {
+	font-size: 12px;
+	color: var(--ts-page-muted-fg);
+	margin-top: 3px;
+}
+.theme-studio-page .ts-smart-row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-wrap: wrap;
+}
+.theme-studio-page .ts-smart-swatch {
+	flex-shrink: 0;
+	display: inline-flex;
+}
+.theme-studio-page .ts-smart-swatch input[type="color"] {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 36px;
+	height: 36px;
+	border: 1px solid var(--ts-page-border);
+	border-radius: 8px;
+	padding: 0;
+	background: none;
+	cursor: pointer;
+}
+.theme-studio-page .ts-smart-swatch input[type="color"]::-webkit-color-swatch-wrapper {
+	padding: 3px;
+}
+.theme-studio-page .ts-smart-swatch input[type="color"]::-webkit-color-swatch {
+	border: none;
+	border-radius: 5px;
+}
+.theme-studio-page .ts-gen-hex {
+	max-width: 120px;
+	font-family: var(--ts-font-mono, "SFMono-Regular", Menlo, monospace);
+}
+
 /* ---- Buttons ------------------------------------------------------------ */
 .theme-studio-page .ts-btn {
 	font-size: 12.5px;
