@@ -516,48 +516,10 @@ html[data-theme-studio] body.ts-dual-sidebar .overlay {
 }
 
 /* =========================================================================
-   4. Backdrop (used when the rail expands as an overlay on small screens)
+   4. Responsive — hide the rail on small screens
    ========================================================================= */
-html[data-theme-studio] .ts-rail-backdrop {
-	position: fixed;
-	inset: 0;
-	background-color: color-mix(in srgb, var(--ts-foreground) 45%, transparent);
-	z-index: 1020;
-	opacity: 0;
-	visibility: hidden;
-	transition: opacity 0.2s var(--ts-ease), visibility 0.2s var(--ts-ease);
-}
-html[data-theme-studio] .ts-rail-backdrop.visible {
-	opacity: 1;
-	visibility: visible;
-}
-
-/* =========================================================================
-   5. Responsive behaviour
-   -------------------------------------------------------------------------
-   • Tablets / narrow desktops: the expanded rail floats over the content as
-     an overlay drawer (with a backdrop) instead of squeezing the layout.
-   • Phones: the rail collapses to icons only and the panel narrows.
-   ========================================================================= */
-@media (max-width: 991px) {
-	html[data-theme-studio] body.ts-rail-expanded .ts-workspace-rail {
-		position: fixed;
-		top: 0;
-		left: 0;
-		box-shadow: 0 12px 40px -12px color-mix(in srgb, var(--ts-foreground) 50%, transparent);
-	}
-	html[data-theme-studio] body.ts-rail-expanded.ts-dual-sidebar .ts-rail-backdrop {
-		opacity: 1;
-		visibility: visible;
-	}
-}
-
 @media (max-width: 576px) {
-	html[data-theme-studio] {
-		--ts-sidebar-panel-width: 80vw;
-	}
-	/* Keep the icon rail accessible; just trim its footprint. */
 	html[data-theme-studio] .ts-workspace-rail {
-		--ts-rail-width: 52px;
+		display: none;
 	}
 }

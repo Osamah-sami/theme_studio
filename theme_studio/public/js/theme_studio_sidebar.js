@@ -61,7 +61,6 @@
 		/* Hide the rail and undo layout classes when theming is turned off. */
 		teardown: function () {
 			if (this.$rail) this.$rail.hide();
-			if (this.$backdrop) this.$backdrop.removeClass("visible");
 			$("body").removeClass("ts-dual-sidebar");
 			$("body > .ts-rail-tooltip").removeClass("visible");
 		},
@@ -93,8 +92,7 @@
 				var icon_content = me.get_icon_for_workspace(ws);
 				var label = frappe.utils.escape_html(ws.label);
 				icons_html +=
-					'<div class="ts-rail-item" data-workspace="' + label + '"' +
-					' role="button" tabindex="0" aria-label="' + label + '">' +
+					'<div class="ts-rail-item" data-workspace="' + label + '">' +
 					'<div class="ts-rail-icon">' + icon_content + "</div>" +
 					'<span class="ts-rail-label">' + label + "</span>" +
 					'<span class="ts-rail-tooltip">' + label + "</span>" +
@@ -107,41 +105,27 @@
 				'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 17 5-5-5-5"/><path d="m13 17 5-5-5-5"/></svg>';
 
 			this.$rail = $(
-				'<nav class="ts-workspace-rail" role="navigation" aria-label="' + __("Workspaces") + '">' +
+				'<div class="ts-workspace-rail">' +
 					'<div class="ts-rail-search">' +
-						'<div class="ts-rail-search-btn" role="button" tabindex="0" aria-label="' + __("Search workspaces") + '" title="' + __("Search workspaces") + '">' + search_svg + "</div>" +
+						'<div class="ts-rail-search-btn" title="' + __("Search workspaces") + '">' + search_svg + "</div>" +
 						'<div class="ts-rail-search-box">' + search_svg +
-							'<input type="text" placeholder="' + __("Search") + '" spellcheck="false" aria-label="' + __("Search workspaces") + '">' +
-							'<span class="ts-rail-search-clear" role="button" tabindex="0" aria-label="' + __("Clear") + '" title="' + __("Clear") + '">&times;</span>' +
+							'<input type="text" placeholder="' + __("Search") + '" spellcheck="false">' +
+							'<span class="ts-rail-search-clear" title="' + __("Clear") + '">&times;</span>' +
 						"</div>" +
 					"</div>" +
 					'<div class="ts-rail-top">' + icons_html + "</div>" +
 					'<div class="ts-rail-empty">' + __("No workspaces found") + "</div>" +
 					'<div class="ts-rail-bottom">' +
-						'<div class="ts-rail-toggle" role="button" tabindex="0" aria-label="' + __("Expand or collapse sidebar") + '" aria-expanded="false" title="' + __("Expand / collapse (Ctrl/Cmd + B)") + '">' + chevrons_svg + "</div>" +
+						'<div class="ts-rail-toggle" title="' + __("Expand / collapse") + '">' + chevrons_svg + "</div>" +
 					"</div>" +
-					'<div class="ts-rail-resizer" aria-hidden="true"></div>' +
-				"</nav>"
+					'<div class="ts-rail-resizer"></div>' +
+				"</div>"
 			);
 
-			this.$backdrop = $('<div class="ts-rail-backdrop" aria-hidden="true"></div>');
-
 			$(".body-sidebar-container").before(this.$rail);
-			$("body").append(this.$backdrop);
-			this.$backdrop.on("click", function () {
-				me.set_rail_expanded(false);
-			});
 
 			this.$rail.find(".ts-rail-item").on("click", function () {
 				me.switch_workspace($(this).data("workspace"));
-			});
-
-			// Keyboard: Enter/Space activates any role="button" element in the rail.
-			this.$rail.on("keydown", '[role="button"]', function (e) {
-				if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") {
-					e.preventDefault();
-					$(this).trigger("click");
-				}
 			});
 
 			// Tooltips live on <body> so they escape the rail's overflow clip.
@@ -198,11 +182,6 @@
 				/* non-persistent, still works for the session */
 			}
 			$("body > .ts-rail-tooltip").removeClass("visible");
-			if (this.$rail) {
-				this.$rail
-					.find(".ts-rail-toggle")
-					.attr("aria-expanded", expanded ? "true" : "false");
-			}
 			if (!expanded && this.$rail) {
 				this.$rail.find(".ts-rail-search-box input").val("");
 				this.filter_rail("");
@@ -356,17 +335,6 @@
 
 		listen_for_changes: function () {
 			var me = this;
-
-			// Ctrl/Cmd + B toggles the rail, matching common editor shortcuts.
-			$(document).on("keydown.ts_rail", function (e) {
-				if ((e.metaKey || e.ctrlKey) && (e.key === "b" || e.key === "B")) {
-					if (!me.theme_active() || !me.rail_built) return;
-					var tag = (e.target.tagName || "").toLowerCase();
-					if (tag === "input" || tag === "textarea" || e.target.isContentEditable) return;
-					e.preventDefault();
-					me.set_rail_expanded(!$("body").hasClass("ts-rail-expanded"));
-				}
-			});
 
 			$(document).on("sidebar_setup", function () {
 				if (!me.rail_built) me.init();
