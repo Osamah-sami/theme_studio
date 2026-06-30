@@ -49,6 +49,43 @@
 	margin-bottom: 16px;
 }
 
+/* ---- Gallery controls (search + filters) -------------------------------- */
+.theme-studio-page .ts-gallery-controls {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	flex-wrap: wrap;
+	margin-bottom: 14px;
+}
+.theme-studio-page .ts-search {
+	flex: 1;
+	min-width: 160px;
+}
+.theme-studio-page .ts-filter-chips {
+	display: flex;
+	gap: 6px;
+	flex-wrap: wrap;
+}
+.theme-studio-page .ts-chip-btn {
+	font-size: 11.5px;
+	font-weight: 500;
+	padding: 4px 11px;
+	border-radius: 9999px;
+	border: 1px solid var(--ts-page-border);
+	background: var(--ts-card, #fff);
+	color: var(--ts-page-muted-fg);
+	cursor: pointer;
+	transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+.theme-studio-page .ts-chip-btn:hover {
+	background: var(--ts-accent, #f4f4f5);
+}
+.theme-studio-page .ts-chip-btn.is-on {
+	background: var(--ts-primary, #18181b);
+	border-color: var(--ts-primary, #18181b);
+	color: var(--ts-primary-foreground, #fafafa);
+}
+
 /* ---- Theme gallery ------------------------------------------------------ */
 .theme-studio-page .ts-grid {
 	display: grid;
@@ -223,6 +260,50 @@
 	letter-spacing: 0.06em;
 	color: var(--ts-page-muted-fg);
 	margin: 18px 0 8px;
+}
+
+/* ---- Contrast badges ---------------------------------------------------- */
+.theme-studio-page .ts-contrast {
+	flex-shrink: 0;
+	font-size: 9.5px;
+	font-weight: 700;
+	line-height: 1;
+	padding: 3px 5px;
+	border-radius: 5px;
+	letter-spacing: 0.02em;
+	white-space: nowrap;
+	font-family: var(--ts-font-mono, "SFMono-Regular", Menlo, monospace);
+}
+.theme-studio-page .ts-contrast-aaa {
+	background: color-mix(in srgb, #16a34a 18%, transparent);
+	color: #15803d;
+}
+.theme-studio-page .ts-contrast-aa {
+	background: color-mix(in srgb, #ca8a04 20%, transparent);
+	color: #a16207;
+}
+.theme-studio-page .ts-contrast-fail {
+	background: color-mix(in srgb, var(--ts-destructive, #ef4444) 18%, transparent);
+	color: var(--ts-destructive, #ef4444);
+}
+
+/* ---- Collapsible sidebar/chart group ------------------------------------ */
+.theme-studio-page .ts-ext-wrap {
+	margin-top: 8px;
+}
+.theme-studio-page .ts-ext-toggle {
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: var(--ts-page-muted-fg);
+	background: none;
+	border: none;
+	padding: 12px 0 4px;
+	cursor: pointer;
+}
+.theme-studio-page .ts-ext-toggle:hover {
+	color: var(--ts-foreground, #09090b);
 }
 
 .theme-studio-page .ts-input {

@@ -44,10 +44,59 @@ const TOKEN_GROUPS = [
 	},
 ];
 
+// Core tokens map 1:1 to DocType fields. The extended groups below are saved
+// as "extra tokens" JSON, so they must stay OUT of ALL_TOKEN_KEYS.
 const ALL_TOKEN_KEYS = TOKEN_GROUPS.reduce(
 	(acc, g) => acc.concat(g.tokens.map((t) => t[0])),
 	[]
 );
+
+// Sidebar + chart tokens (shadcn_sidecar). Editable but persisted as extras.
+const EXTENDED_GROUPS = [
+	{
+		title: "Sidebar",
+		tokens: [
+			["sidebar", "Sidebar"],
+			["sidebar-foreground", "Sidebar Text"],
+			["sidebar-primary", "Sidebar Primary"],
+			["sidebar-primary-foreground", "Sidebar Primary Text"],
+			["sidebar-accent", "Sidebar Accent"],
+			["sidebar-accent-foreground", "Sidebar Accent Text"],
+			["sidebar-border", "Sidebar Border"],
+			["sidebar-ring", "Sidebar Ring"],
+		],
+	},
+	{
+		title: "Charts",
+		tokens: [
+			["chart-1", "Chart 1"],
+			["chart-2", "Chart 2"],
+			["chart-3", "Chart 3"],
+			["chart-4", "Chart 4"],
+			["chart-5", "Chart 5"],
+		],
+	},
+];
+
+const EXTENDED_TOKEN_KEYS = EXTENDED_GROUPS.reduce(
+	(acc, g) => acc.concat(g.tokens.map((t) => t[0])),
+	[]
+);
+
+// Foreground token -> the background token it sits on, for live contrast checks.
+const CONTRAST_PAIRS = {
+	foreground: "background",
+	"card-foreground": "card",
+	"popover-foreground": "popover",
+	"primary-foreground": "primary",
+	"secondary-foreground": "secondary",
+	"muted-foreground": "muted",
+	"accent-foreground": "accent",
+	"destructive-foreground": "destructive",
+	"sidebar-foreground": "sidebar",
+	"sidebar-primary-foreground": "sidebar-primary",
+	"sidebar-accent-foreground": "sidebar-accent",
+};
 
 class ThemeStudio {
 	constructor(page) {
@@ -56,6 +105,9 @@ class ThemeStudio {
 		this.context = {};
 		this.editing = null;
 		this.previewOnDesk = false;
+		this.gallery_query = "";
+		this.gallery_filter = "all"; // all | Light | Dark | preset | custom
+		this.show_extended = false;
 
 		this.$body = $('<div class="theme-studio-page">').appendTo(page.body);
 		this.setup_actions();
@@ -77,6 +129,7 @@ class ThemeStudio {
 					this.refresh();
 				});
 		});
+		this.page.add_inner_button(__("Import Theme"), () => this.import_theme());
 	}
 
 	async refresh() {
@@ -154,6 +207,13 @@ class ThemeStudio {
 	/* ----------------------------------------------------------------- */
 	render_gallery() {
 		const activeName = this.context.active && this.context.active.name;
+		const FILTERS = [
+			["all", __("All")],
+			["Light", __("Light")],
+			["Dark", __("Dark")],
+			["preset", __("Presets")],
+			["custom", __("Custom")],
+		];
 		const $p = $(`
 			<div class="ts-panel">
 				<div class="ts-panel-head">
@@ -161,17 +221,61 @@ class ThemeStudio {
 					<span class="ts-badge">${this.themes.length} ${__("total")}</span>
 				</div>
 				<div class="ts-panel-sub">${__("Hover to preview on the Desk, click Apply to keep it.")}</div>
+				<div class="ts-gallery-controls">
+					<input class="ts-input ts-search" type="search"
+						placeholder="${__("Search themes…")}" value="${frappe.utils.escape_html(this.gallery_query)}"/>
+					<div class="ts-filter-chips">
+						${FILTERS.map(
+							([val, label]) =>
+								`<button class="ts-chip-btn ${this.gallery_filter === val ? "is-on" : ""}" data-filter="${val}">${label}</button>`
+						).join("")}
+					</div>
+				</div>
 				<div class="ts-grid"></div>
 			</div>
 		`).appendTo(this.$left);
 		const $grid = $p.find(".ts-grid");
 
+		$p.find(".ts-search").on("input", (e) => {
+			this.gallery_query = e.target.value;
+			this.render_gallery_cards($grid, activeName);
+		});
+		$p.find(".ts-chip-btn").on("click", (e) => {
+			this.gallery_filter = e.currentTarget.dataset.filter;
+			$p.find(".ts-chip-btn").removeClass("is-on");
+			$(e.currentTarget).addClass("is-on");
+			this.render_gallery_cards($grid, activeName);
+		});
+
+		this.render_gallery_cards($grid, activeName);
+	}
+
+	filtered_themes() {
+		const q = (this.gallery_query || "").trim().toLowerCase();
+		const f = this.gallery_filter;
+		return this.themes.filter((theme) => {
+			if (q && (theme.theme_name || "").toLowerCase().indexOf(q) === -1) return false;
+			if (f === "Light" || f === "Dark") return theme.appearance === f;
+			if (f === "preset") return !!theme.is_preset;
+			if (f === "custom") return !theme.is_preset;
+			return true;
+		});
+	}
+
+	render_gallery_cards($grid, activeName) {
+		$grid.empty();
+		const themes = this.filtered_themes();
+
 		if (!this.themes.length) {
-			$grid.replaceWith('<div class="ts-empty">' + __("No themes yet.") + "</div>");
+			$grid.html('<div class="ts-empty">' + __("No themes yet.") + "</div>");
+			return;
+		}
+		if (!themes.length) {
+			$grid.html('<div class="ts-empty">' + __("No themes match your filters.") + "</div>");
 			return;
 		}
 
-		this.themes.forEach((theme) => {
+		themes.forEach((theme) => {
 			const t = theme.tokens || {};
 			const isActive = theme.name === activeName;
 			const $card = $(`
@@ -221,6 +325,13 @@ class ThemeStudio {
 				.on("click", (e) => {
 					e.stopPropagation();
 					theme.is_preset ? this.duplicate_theme(theme) : this.open_editor(theme);
+				});
+
+			$('<button class="ts-btn ts-btn-sm">' + __("Export") + "</button>")
+				.appendTo($actions)
+				.on("click", (e) => {
+					e.stopPropagation();
+					this.export_theme(theme);
 				});
 
 			if (!theme.is_preset && this.context.can_manage) {
@@ -310,6 +421,8 @@ class ThemeStudio {
 						: '<button class="ts-btn ts-btn-primary ts-save-btn">' + __("Save Theme") + "</button>"}
 					${!isPreset ? '<button class="ts-btn ts-saveapply-btn">' + __("Save & Apply") + "</button>" : ""}
 					<button class="ts-btn ts-revert-btn">${__("Reset Fields")}</button>
+					<button class="ts-btn ts-copycss-btn">${__("Copy CSS")}</button>
+					<button class="ts-btn ts-exportcur-btn">${__("Export JSON")}</button>
 				</div>
 			</div>
 		`).appendTo(this.$right);
@@ -318,35 +431,23 @@ class ThemeStudio {
 
 		// token pickers
 		const $tokens = $p.find(".ts-tokens");
-		TOKEN_GROUPS.forEach((group) => {
-			$('<div class="ts-group-title">' + __(group.title) + "</div>").appendTo($tokens);
-			const $g = $('<div class="ts-token-grid">').appendTo($tokens);
-			group.tokens.forEach(([key, label]) => {
-				const val = (e && e.tokens && e.tokens[key]) || "#888888";
-				const $tok = $(`
-					<div class="ts-token">
-						<input type="color" value="${val}" ${isPreset ? "disabled" : ""}/>
-						<div class="ts-token-body">
-							<span class="ts-token-name">${__(label)}</span>
-							<input class="ts-token-hex" value="${val}" ${isPreset ? "disabled" : ""}/>
-						</div>
-					</div>
-				`);
-				const $color = $tok.find('input[type="color"]');
-				const $hex = $tok.find(".ts-token-hex");
-				$color.on("input", () => {
-					$hex.val($color.val());
-					this.on_token_change(key, $color.val());
-				});
-				$hex.on("change", () => {
-					const v = $hex.val().trim();
-					if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(v)) {
-						$color.val(v);
-						this.on_token_change(key, v);
-					}
-				});
-				$g.append($tok);
-			});
+		TOKEN_GROUPS.forEach((group) => this.render_token_group($tokens, group, isPreset));
+
+		// Collapsible extended group (sidebar + chart tokens, saved as extras).
+		const $extWrap = $('<div class="ts-ext-wrap">').appendTo($tokens);
+		const $extToggle = $(
+			'<button class="ts-ext-toggle">' +
+				(this.show_extended ? "▾ " : "▸ ") +
+				__("Sidebar & Chart Colors") +
+				"</button>"
+		).appendTo($extWrap);
+		const $extBody = $('<div class="ts-ext-body">').appendTo($extWrap);
+		if (!this.show_extended) $extBody.hide();
+		EXTENDED_GROUPS.forEach((group) => this.render_token_group($extBody, group, isPreset));
+		$extToggle.on("click", () => {
+			this.show_extended = !this.show_extended;
+			$extBody.toggle(this.show_extended);
+			$extToggle.text((this.show_extended ? "▾ " : "▸ ") + __("Sidebar & Chart Colors"));
 		});
 
 		// the live mock
@@ -398,6 +499,64 @@ class ThemeStudio {
 			const original = this.themes.find((t) => t.name === this.editing.name);
 			this.editing = this.clone_for_edit(original);
 			this.render();
+		});
+		$p.find(".ts-copycss-btn").on("click", () => this.copy_css(this.editing));
+		$p.find(".ts-exportcur-btn").on("click", () => this.export_theme(this.editing));
+	}
+
+	/** Render one labelled grid of color tokens with live contrast badges. */
+	render_token_group($parent, group, isPreset) {
+		$('<div class="ts-group-title">' + __(group.title) + "</div>").appendTo($parent);
+		const $g = $('<div class="ts-token-grid">').appendTo($parent);
+		group.tokens.forEach(([key, label]) => {
+			const val = (this.editing && this.editing.tokens && this.editing.tokens[key]) || "#888888";
+			const $tok = $(`
+				<div class="ts-token" data-token="${key}">
+					<input type="color" value="${val}" ${isPreset ? "disabled" : ""}/>
+					<div class="ts-token-body">
+						<span class="ts-token-name">${__(label)}</span>
+						<input class="ts-token-hex" value="${val}" ${isPreset ? "disabled" : ""}/>
+					</div>
+					<span class="ts-contrast" data-for="${key}"></span>
+				</div>
+			`);
+			const $color = $tok.find('input[type="color"]');
+			const $hex = $tok.find(".ts-token-hex");
+			$color.on("input", () => {
+				$hex.val($color.val());
+				this.on_token_change(key, $color.val());
+			});
+			$hex.on("change", () => {
+				const v = $hex.val().trim();
+				if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(v)) {
+					$color.val(v);
+					this.on_token_change(key, v);
+				}
+			});
+			$g.append($tok);
+		});
+		this.update_contrast_badges($parent);
+	}
+
+	/** Update WCAG contrast badges for any foreground tokens shown in $scope. */
+	update_contrast_badges($scope) {
+		const engine = window.theme_studio_color;
+		const tokens = (this.editing && this.editing.tokens) || {};
+		const $root = $scope || this.$right;
+		$root.find(".ts-contrast").each((_, el) => {
+			const $b = $(el);
+			const fgKey = $b.data("for");
+			const bgKey = CONTRAST_PAIRS[fgKey];
+			if (!engine || !bgKey || !tokens[fgKey] || !tokens[bgKey]) {
+				$b.hide();
+				return;
+			}
+			const ratio = engine.contrastRatio(tokens[fgKey], tokens[bgKey]);
+			const level = engine.wcagLevel(ratio, false);
+			$b.show()
+				.attr("class", "ts-contrast ts-contrast-" + level.toLowerCase())
+				.attr("title", __("Contrast vs {0}: {1}:1 ({2})", [bgKey, ratio.toFixed(2), level]))
+				.text(level === "Fail" ? "✕ " + ratio.toFixed(1) : level + " " + ratio.toFixed(1));
 		});
 	}
 
@@ -465,6 +624,7 @@ class ThemeStudio {
 	/* ----------------------------------------------------------------- */
 	on_token_change(key, value) {
 		this.editing.tokens[key] = value;
+		this.update_contrast_badges();
 		this.refresh_live();
 	}
 
@@ -555,7 +715,9 @@ class ThemeStudio {
 			// New theme seeded from a clean light base.
 			const seed = this.themes.find((t) => t.name === "Shadcn Light") || this.themes[0];
 			const tokens = {};
-			ALL_TOKEN_KEYS.forEach((k) => (tokens[k] = (seed && seed.tokens[k]) || "#888888"));
+			ALL_TOKEN_KEYS.concat(EXTENDED_TOKEN_KEYS).forEach(
+				(k) => (tokens[k] = (seed && seed.tokens[k]) || "#888888")
+			);
 			return {
 				name: null,
 				theme_name: "",
@@ -678,5 +840,94 @@ class ThemeStudio {
 					this.refresh();
 				});
 		});
+	}
+
+	/* ----------------------------------------------------------------- */
+	/* Export / Import / Copy CSS                                        */
+	/* ----------------------------------------------------------------- */
+
+	/** A portable, version-tagged representation of a theme. */
+	export_payload(theme) {
+		const tokens = Object.assign({}, theme.tokens || {});
+		tokens["radius"] = theme.radius || tokens["radius"] || "0.5rem";
+		if (theme.font_family) tokens["font-family"] = theme.font_family;
+		return {
+			$schema: "theme-studio/theme",
+			version: 1,
+			theme_name: theme.theme_name || theme.name || "Custom Theme",
+			appearance: theme.appearance || "Light",
+			font_family: theme.font_family || "Inter",
+			radius: theme.radius || "0.5rem",
+			tokens,
+		};
+	}
+
+	/** Trigger a JSON file download for a theme. */
+	export_theme(theme) {
+		const data = this.export_payload(theme);
+		const json = JSON.stringify(data, null, 2);
+		const slug = (data.theme_name || "theme")
+			.toLowerCase()
+			.replace(/[^a-z0-9]+/g, "-")
+			.replace(/^-+|-+$/g, "");
+		const blob = new Blob([json], { type: "application/json" });
+		const url = URL.createObjectURL(blob);
+		const a = document.createElement("a");
+		a.href = url;
+		a.download = (slug || "theme") + ".theme.json";
+		document.body.appendChild(a);
+		a.click();
+		document.body.removeChild(a);
+		URL.revokeObjectURL(url);
+		frappe.show_alert({ message: __("Exported “{0}”.", [data.theme_name]), indicator: "green" });
+	}
+
+	/** Copy the theme tokens as a ready-to-paste CSS :root block. */
+	copy_css(theme) {
+		const data = this.export_payload(theme);
+		const lines = Object.keys(data.tokens)
+			.sort()
+			.map((k) => "  --" + k + ": " + data.tokens[k] + ";");
+		const selector = data.appearance === "Dark" ? ".dark, :root" : ":root";
+		const css = "/* " + data.theme_name + " */\n" + selector + " {\n" + lines.join("\n") + "\n}\n";
+		frappe.utils.copy_to_clipboard(css);
+		frappe.show_alert({ message: __("Copied CSS variables to clipboard."), indicator: "green" });
+	}
+
+	/** Import a theme from a .json file and persist it as a new custom theme. */
+	import_theme() {
+		if (!this.context.can_manage) {
+			frappe.msgprint(__("Only System Managers can import themes."));
+			return;
+		}
+		const input = document.createElement("input");
+		input.type = "file";
+		input.accept = "application/json,.json";
+		input.addEventListener("change", () => {
+			const file = input.files && input.files[0];
+			if (!file) return;
+			const reader = new FileReader();
+			reader.onload = () => {
+				let parsed;
+				try {
+					parsed = JSON.parse(reader.result);
+				} catch (err) {
+					frappe.msgprint(__("That file is not valid JSON."));
+					return;
+				}
+				frappe
+					.xcall("theme_studio.api.import_theme", { theme: JSON.stringify(parsed) })
+					.then((saved) => {
+						frappe.show_alert({
+							message: __("Imported “{0}”.", [saved.theme_name]),
+							indicator: "green",
+						});
+						this.editing = this.clone_for_edit(saved);
+						this.refresh();
+					});
+			};
+			reader.readAsText(file);
+		});
+		input.click();
 	}
 }
