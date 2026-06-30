@@ -17,10 +17,12 @@ app_version = "0.1.0"
 # include js, css files in header of desk.html
 app_include_css = [
 	"/assets/theme_studio/css/shadcn_desk.css",
+	"/assets/theme_studio/css/shadcn_sidebar.css",
 ]
 app_include_js = [
 	"/assets/theme_studio/js/theme_studio_color_engine.js",
 	"/assets/theme_studio/js/theme_studio_boot.js",
+	"/assets/theme_studio/js/theme_studio_sidebar.js",
 ]
 
 # include js, css files in header of web template

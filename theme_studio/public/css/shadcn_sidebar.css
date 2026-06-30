@@ -1,0 +1,525 @@
+/* =========================================================================
+   Theme Studio — Dual Sidebar styling (Workspace Rail + Panel)
+   -------------------------------------------------------------------------
+   Styles the small icon rail and the large workspace panel for the Frappe
+   v16 Desk. Every colour, border and radius is driven by the same
+   `--ts-sidebar-*` / `--ts-*` design tokens the boot loader sets on <html>,
+   so switching a Theme Studio theme re-skins the whole dual sidebar too.
+
+   All rules are scoped to `html[data-theme-studio]` so the stock Frappe look
+   returns the instant theming is disabled. The rail markup is injected by
+   `theme_studio_sidebar.js`; the panel (`.body-sidebar`) is Frappe's own.
+   ========================================================================= */
+
+html[data-theme-studio] {
+	/* Rail geometry — collapsed (icons only) and expanded (icons + labels). */
+	--ts-rail-width: 60px;
+	--ts-rail-width-expanded: 200px;
+	--ts-sidebar-panel-width: 240px;
+
+	/* A slightly recessed surface so the rail reads as a distinct column while
+	   still tracking the theme. Falls back to the plain sidebar token. */
+	--ts-rail-bg: color-mix(in srgb, var(--ts-sidebar) 92%, var(--ts-foreground));
+	--ts-rail-border: var(--ts-sidebar-border);
+	--ts-rail-fg: var(--ts-sidebar-foreground);
+}
+
+html[data-theme-studio] body.ts-rail-expanded {
+	--ts-rail-width: var(--ts-rail-width-expanded);
+}
+
+/* =========================================================================
+   1. Workspace rail (the "small" sidebar)
+   ========================================================================= */
+html[data-theme-studio] .ts-workspace-rail {
+	width: var(--ts-rail-width);
+	min-width: var(--ts-rail-width);
+	height: 100vh;
+	background-color: var(--ts-rail-bg);
+	border-right: 1px solid var(--ts-rail-border);
+	color: var(--ts-rail-fg);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 14px 0;
+	position: sticky;
+	top: 0;
+	z-index: 1021;
+	overflow: hidden;
+	transition: width 0.2s var(--ts-ease), min-width 0.2s var(--ts-ease);
+}
+
+html[data-theme-studio] .ts-rail-top {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 4px;
+	width: 100%;
+	padding: 0 8px;
+	flex: 1;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+/* ---- Rail item --------------------------------------------------------- */
+html[data-theme-studio] .ts-rail-item {
+	width: 44px;
+	height: 44px;
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: calc(var(--ts-radius) + 0.125rem);
+	cursor: pointer;
+	transition: background-color 0.15s var(--ts-ease), color 0.15s var(--ts-ease);
+	position: relative;
+	color: color-mix(in srgb, var(--ts-rail-fg) 60%, transparent);
+}
+
+html[data-theme-studio] .ts-rail-item:hover {
+	background-color: var(--ts-sidebar-accent);
+	color: var(--ts-sidebar-accent-foreground);
+}
+
+html[data-theme-studio] .ts-rail-item.active {
+	background-color: var(--ts-sidebar-accent);
+	color: var(--ts-sidebar-accent-foreground);
+}
+
+/* Active indicator — left accent bar in the primary colour. */
+html[data-theme-studio] .ts-rail-item.active::before {
+	content: "";
+	position: absolute;
+	left: -8px;
+	top: 8px;
+	bottom: 8px;
+	width: 3px;
+	background-color: var(--ts-sidebar-primary);
+	border-radius: 0 9999px 9999px 0;
+}
+
+/* ---- Rail icon --------------------------------------------------------- */
+html[data-theme-studio] .ts-rail-icon {
+	width: 24px;
+	height: 24px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: visible;
+}
+
+html[data-theme-studio] .ts-rail-icon svg,
+html[data-theme-studio] .ts-rail-icon .icon {
+	width: 20px !important;
+	height: 20px !important;
+	color: currentColor !important;
+	stroke: currentColor !important;
+	transition: color 0.15s var(--ts-ease), stroke 0.15s var(--ts-ease);
+}
+
+/* Initials fallback when a workspace has no icon. */
+html[data-theme-studio] .ts-rail-initials {
+	font-size: 12px;
+	font-weight: 700;
+	color: currentColor;
+	letter-spacing: 0.02em;
+	line-height: 1;
+}
+
+/* ---- Expanded mode: items become full-width rows with labels ----------- */
+html[data-theme-studio] body.ts-rail-expanded .ts-rail-item,
+html[data-theme-studio] body.ts-rail-resizing .ts-rail-item {
+	width: 100%;
+	height: 36px;
+	justify-content: flex-start;
+	gap: 8px;
+	padding: 0 10px;
+}
+
+html[data-theme-studio] body.ts-rail-expanded .ts-rail-icon svg,
+html[data-theme-studio] body.ts-rail-expanded .ts-rail-icon .icon,
+html[data-theme-studio] body.ts-rail-resizing .ts-rail-icon svg,
+html[data-theme-studio] body.ts-rail-resizing .ts-rail-icon .icon {
+	width: 16px !important;
+	height: 16px !important;
+}
+
+html[data-theme-studio] .ts-rail-label {
+	display: none;
+	flex: 1;
+	min-width: 0;
+	font-size: 0.84rem;
+	font-weight: 500;
+	line-height: 1;
+	color: currentColor;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+html[data-theme-studio] body.ts-rail-expanded .ts-rail-label,
+html[data-theme-studio] body.ts-rail-resizing .ts-rail-label {
+	display: block;
+}
+
+/* ---- Rail search ------------------------------------------------------- */
+html[data-theme-studio] .ts-rail-search {
+	width: 100%;
+	padding: 0 8px;
+	margin-bottom: 6px;
+	flex-shrink: 0;
+}
+
+html[data-theme-studio] .ts-rail-search-btn {
+	width: 44px;
+	height: 40px;
+	margin: 0 auto;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: calc(var(--ts-radius) + 0.125rem);
+	cursor: pointer;
+	color: color-mix(in srgb, var(--ts-rail-fg) 60%, transparent);
+	transition: background-color 0.15s var(--ts-ease), color 0.15s var(--ts-ease);
+}
+
+html[data-theme-studio] .ts-rail-search-btn:hover {
+	background-color: var(--ts-sidebar-accent);
+	color: var(--ts-sidebar-accent-foreground);
+}
+
+html[data-theme-studio] .ts-rail-search-btn svg {
+	width: 18px;
+	height: 18px;
+	color: currentColor;
+}
+
+html[data-theme-studio] .ts-rail-search-box {
+	display: none;
+	align-items: center;
+	gap: 8px;
+	height: 36px;
+	padding: 0 10px;
+	border-radius: var(--ts-radius);
+	background-color: color-mix(in srgb, var(--ts-rail-fg) 8%, transparent);
+	border: 1px solid var(--ts-rail-border);
+	transition: border-color 0.15s var(--ts-ease), background-color 0.15s var(--ts-ease);
+}
+
+html[data-theme-studio] .ts-rail-search-box:focus-within {
+	border-color: var(--ts-sidebar-ring);
+	box-shadow: var(--ts-ring-shadow);
+}
+
+html[data-theme-studio] .ts-rail-search-box svg {
+	width: 15px;
+	height: 15px;
+	color: color-mix(in srgb, var(--ts-rail-fg) 55%, transparent);
+	flex-shrink: 0;
+}
+
+html[data-theme-studio] .ts-rail-search-box input {
+	flex: 1;
+	min-width: 0;
+	background: transparent;
+	border: none;
+	outline: none;
+	box-shadow: none;
+	color: var(--ts-rail-fg);
+	font-size: 0.84rem;
+	font-weight: 400;
+	padding: 0;
+}
+
+html[data-theme-studio] .ts-rail-search-box input::placeholder {
+	color: color-mix(in srgb, var(--ts-rail-fg) 45%, transparent);
+}
+
+html[data-theme-studio] .ts-rail-search-clear {
+	display: none;
+	color: color-mix(in srgb, var(--ts-rail-fg) 55%, transparent);
+	cursor: pointer;
+	font-size: 15px;
+	line-height: 1;
+	flex-shrink: 0;
+}
+
+html[data-theme-studio] .ts-rail-search-clear:hover {
+	color: var(--ts-rail-fg);
+}
+
+html[data-theme-studio] .ts-workspace-rail.ts-filtering .ts-rail-search-clear {
+	display: block;
+}
+
+html[data-theme-studio] body.ts-rail-expanded .ts-rail-search-box,
+html[data-theme-studio] body.ts-rail-resizing .ts-rail-search-box {
+	display: flex;
+}
+
+html[data-theme-studio] body.ts-rail-expanded .ts-rail-search-btn,
+html[data-theme-studio] body.ts-rail-resizing .ts-rail-search-btn {
+	display: none;
+}
+
+html[data-theme-studio] .ts-rail-item.ts-rail-hidden {
+	display: none !important;
+}
+
+html[data-theme-studio] .ts-rail-empty {
+	display: none;
+	font-size: 12px;
+	color: color-mix(in srgb, var(--ts-rail-fg) 45%, transparent);
+	text-align: center;
+	padding: 10px 8px;
+	flex-shrink: 0;
+}
+
+html[data-theme-studio] .ts-rail-empty.visible {
+	display: block;
+}
+
+/* ---- Rail bottom — expand / collapse toggle ---------------------------- */
+html[data-theme-studio] .ts-rail-bottom {
+	flex-shrink: 0;
+	width: 100%;
+	padding: 6px 8px 0;
+	border-top: 1px solid var(--ts-rail-border);
+	margin-top: 6px;
+}
+
+html[data-theme-studio] .ts-rail-toggle {
+	width: 44px;
+	height: 36px;
+	margin: 0 auto;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: var(--ts-radius);
+	cursor: pointer;
+	color: color-mix(in srgb, var(--ts-rail-fg) 55%, transparent);
+	transition: background-color 0.15s var(--ts-ease), color 0.15s var(--ts-ease);
+}
+
+html[data-theme-studio] body.ts-rail-expanded .ts-rail-toggle {
+	width: 100%;
+}
+
+html[data-theme-studio] .ts-rail-toggle:hover {
+	background-color: var(--ts-sidebar-accent);
+	color: var(--ts-sidebar-accent-foreground);
+}
+
+html[data-theme-studio] .ts-rail-toggle svg {
+	width: 16px;
+	height: 16px;
+	color: currentColor;
+	transition: transform 0.2s var(--ts-ease);
+}
+
+html[data-theme-studio] body.ts-rail-expanded .ts-rail-toggle svg {
+	transform: rotate(180deg);
+}
+
+/* ---- Rail resizer — drag edge, snaps to nearest state ------------------ */
+html[data-theme-studio] .ts-rail-resizer {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 5px;
+	height: 100%;
+	cursor: col-resize;
+	z-index: 5;
+}
+
+html[data-theme-studio] .ts-rail-resizer:hover,
+html[data-theme-studio] body.ts-rail-resizing .ts-rail-resizer {
+	background-color: color-mix(in srgb, var(--ts-sidebar-ring) 45%, transparent);
+}
+
+html[data-theme-studio] body.ts-rail-resizing {
+	cursor: col-resize;
+	user-select: none;
+	-webkit-user-select: none;
+}
+
+html[data-theme-studio] body.ts-rail-resizing .ts-workspace-rail {
+	transition: none;
+}
+
+/* ---- Rail tooltip (collapsed mode only; positioned by JS on <body>) ---- */
+html[data-theme-studio] .ts-rail-tooltip {
+	position: fixed;
+	background-color: var(--ts-primary);
+	color: var(--ts-primary-foreground);
+	font-size: 12px;
+	font-weight: 500;
+	padding: 5px 10px;
+	border-radius: calc(var(--ts-radius) - 0.125rem);
+	white-space: nowrap;
+	pointer-events: none;
+	opacity: 0;
+	visibility: hidden;
+	transition: opacity 0.12s var(--ts-ease), visibility 0.12s var(--ts-ease);
+	z-index: 9999;
+	box-shadow: var(--ts-shadow-md);
+}
+
+html[data-theme-studio] .ts-rail-tooltip::before {
+	content: "";
+	position: absolute;
+	right: 100%;
+	top: 50%;
+	transform: translateY(-50%);
+	border: 5px solid transparent;
+	border-right-color: var(--ts-primary);
+}
+
+html[data-theme-studio] .ts-rail-tooltip.visible {
+	opacity: 1;
+	visibility: visible;
+}
+
+/* ---- Rail scrollbar ---------------------------------------------------- */
+html[data-theme-studio] .ts-rail-top::-webkit-scrollbar {
+	width: 2px;
+}
+html[data-theme-studio] .ts-rail-top::-webkit-scrollbar-track {
+	background: transparent;
+}
+html[data-theme-studio] .ts-rail-top::-webkit-scrollbar-thumb {
+	background-color: color-mix(in srgb, var(--ts-rail-fg) 18%, transparent);
+	border-radius: 9999px;
+}
+
+/* =========================================================================
+   2. Sidebar panel (the "large" sidebar) — Frappe v16 `.body-sidebar`
+   ========================================================================= */
+html[data-theme-studio] .body-sidebar {
+	background-color: var(--ts-sidebar) !important;
+	border-right: 1px solid var(--ts-sidebar-border) !important;
+	color: var(--ts-sidebar-foreground);
+	padding: 14px 12px;
+	gap: 4px;
+}
+
+html[data-theme-studio] .body-sidebar-container.expanded .body-sidebar {
+	width: var(--ts-sidebar-panel-width);
+}
+
+/* Header */
+html[data-theme-studio] .body-sidebar .sidebar-header {
+	border-radius: var(--ts-radius);
+	transition: background-color 0.15s var(--ts-ease);
+}
+html[data-theme-studio] .body-sidebar .sidebar-header:hover {
+	background-color: var(--ts-sidebar-accent);
+}
+html[data-theme-studio] .body-sidebar .header-title {
+	color: var(--ts-sidebar-foreground) !important;
+	font-weight: 600 !important;
+}
+html[data-theme-studio] .body-sidebar .header-subtitle {
+	color: var(--ts-muted-foreground) !important;
+}
+html[data-theme-studio] .body-sidebar .sidebar-header .drop-icon svg,
+html[data-theme-studio] .body-sidebar .sidebar-header .drop-icon .icon {
+	color: var(--ts-muted-foreground) !important;
+}
+
+/* Items */
+html[data-theme-studio] .body-sidebar .standard-sidebar-item {
+	margin: 0 0 1px;
+}
+html[data-theme-studio] .body-sidebar .standard-sidebar-item .item-anchor {
+	height: 36px;
+	padding: 0 10px;
+	border-radius: var(--ts-radius);
+	color: color-mix(in srgb, var(--ts-sidebar-foreground) 75%, transparent) !important;
+	gap: 8px;
+	transition: background-color 0.15s var(--ts-ease), color 0.15s var(--ts-ease);
+}
+
+html[data-theme-studio]
+	.body-sidebar
+	.standard-sidebar-item:not(.active-sidebar):has(a:not(.section-break)):hover {
+	background-color: var(--ts-sidebar-accent) !important;
+	border-radius: var(--ts-radius) !important;
+}
+
+html[data-theme-studio] .body-sidebar .standard-sidebar-item .sidebar-item-label {
+	color: color-mix(in srgb, var(--ts-sidebar-foreground) 80%, transparent) !important;
+}
+html[data-theme-studio]
+	.body-sidebar
+	.standard-sidebar-item:not(.active-sidebar):hover
+	.sidebar-item-label {
+	color: var(--ts-sidebar-foreground) !important;
+}
+html[data-theme-studio] .body-sidebar .standard-sidebar-item .sidebar-item-icon svg,
+html[data-theme-studio] .body-sidebar .standard-sidebar-item .sidebar-item-icon .icon {
+	color: var(--ts-muted-foreground) !important;
+	stroke: currentColor !important;
+}
+
+/* Active item — primary fill, primary-foreground text */
+html[data-theme-studio] .body-sidebar .standard-sidebar-item.active-sidebar {
+	background-color: var(--ts-sidebar-primary) !important;
+	border-radius: var(--ts-radius) !important;
+	box-shadow: var(--ts-shadow-sm) !important;
+}
+html[data-theme-studio] .body-sidebar .standard-sidebar-item.active-sidebar .item-anchor,
+html[data-theme-studio] .body-sidebar .standard-sidebar-item.active-sidebar .sidebar-item-label {
+	color: var(--ts-sidebar-primary-foreground) !important;
+	font-weight: 560 !important;
+}
+html[data-theme-studio] .body-sidebar .active-sidebar .sidebar-item-icon svg,
+html[data-theme-studio] .body-sidebar .active-sidebar .sidebar-item-icon .icon,
+html[data-theme-studio] .body-sidebar .active-sidebar .sidebar-item-icon svg use,
+html[data-theme-studio] .body-sidebar .active-sidebar .sidebar-item-icon span {
+	color: var(--ts-sidebar-primary-foreground) !important;
+	stroke: var(--ts-sidebar-primary-foreground) !important;
+}
+
+/* Keyboard shortcut hints */
+html[data-theme-studio] .sidebar-item-suffix .keyboard-shortcut {
+	background-color: var(--ts-muted) !important;
+	color: var(--ts-muted-foreground) !important;
+	border-radius: calc(var(--ts-radius) - 0.25rem);
+}
+
+/* =========================================================================
+   3. Dual-sidebar layout glue
+   ========================================================================= */
+html[data-theme-studio] body.ts-dual-sidebar .body-sidebar-container {
+	height: 100vh;
+	width: auto;
+}
+
+/* The rail owns the collapsed spacing, so drop Frappe's placeholder. */
+html[data-theme-studio] body.ts-dual-sidebar .body-sidebar-placeholder {
+	display: none !important;
+}
+
+html[data-theme-studio] body.ts-dual-sidebar .body-sidebar-container.expanded .body-sidebar {
+	width: var(--ts-sidebar-panel-width) !important;
+	position: relative !important;
+}
+
+/* Workspace switching happens from the rail — hide the header chevron. */
+html[data-theme-studio] body.ts-dual-sidebar .sidebar-header .drop-icon {
+	display: none !important;
+}
+
+html[data-theme-studio] body.ts-dual-sidebar .overlay {
+	display: none !important;
+}
+
+/* =========================================================================
+   4. Responsive — hide the rail on small screens
+   ========================================================================= */
+@media (max-width: 576px) {
+	html[data-theme-studio] .ts-workspace-rail {
+		display: none;
+	}
+}

@@ -9,6 +9,11 @@ custom themes from a clean visual editor — all from a dedicated Desk page.
 
 ## Features
 
+- **Dual sidebar (Frappe v16)** — a small icon **workspace rail** beside the large
+  workspace **panel**, just like a modern SaaS desk. Click a rail icon to switch
+  workspaces, expand/collapse the rail (with search, drag-to-resize and hover
+  tooltips), and the whole thing is styled purely with the Shadcn `--ts-sidebar-*`
+  tokens — so it re-skins with the active theme. Works across every Frappe v16 app.
 - **Theme gallery** — every theme rendered as a live swatch card.
 - **Hover-to-preview** — hover a card to preview it on the actual Desk; click *Apply* to keep it.
 - **Per-user or site-wide** — users pick their own theme; admins set the site default.
@@ -80,6 +85,8 @@ If you are developing locally, you can symlink/clone the app into `apps/` and ru
 | `Theme Studio Settings` (Single) | Site default theme + per-user / disable toggles. |
 | `theme_studio/api.py` | Whitelisted endpoints + `boot_session` theme resolution. |
 | `public/css/shadcn_desk.css` | Maps `--ts-*` tokens onto Frappe Desk variables. |
+| `public/css/shadcn_sidebar.css` | Styles the v16 dual sidebar (rail + panel) from the `--ts-sidebar-*` tokens. |
+| `public/js/theme_studio_sidebar.js` | Builds the workspace rail and its expand/collapse, search & resize behaviour. |
 | `public/js/theme_studio_boot.js` | Applies tokens at boot; exposes the preview API. |
 | `page/theme_studio` | The management UI (gallery, editor, live preview). |
 
