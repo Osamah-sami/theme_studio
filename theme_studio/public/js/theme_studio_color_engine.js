@@ -9,6 +9,9 @@
      shades(hex)                -> {50..950: "#rrggbb"}   (Tailwind-style ramp)
      generate(primaryHex, mode) -> { ...tokens }          mode = "Light"|"Dark"
      generateBoth(primaryHex)   -> { light: {...}, dark: {...} }
+     contrastRatio(hex1, hex2)  -> Number                 WCAG 2.1 ratio (1..21)
+     bestForeground(bgHex, opts)-> "#rrggbb"              most readable text color
+     wcagLevel(ratio, large)    -> "AAA"|"AA"|"Fail"      WCAG 2.1 grade
 
    The generated token dict uses the same CSS-property names the rest of Theme
    Studio consumes (background, foreground, primary, …) plus the sidebar-* and
@@ -130,11 +133,62 @@
 		);
 	}
 
+	/* ---- WCAG 2.1 contrast --------------------------------------------- */
+	// Relative luminance per WCAG 2.1 (sRGB, linearized).
+	function relativeLuminance(hex) {
+		var rgb = parseHex(hex);
+		if (!rgb) return 0;
+		var r = srgbToLinear(rgb.r);
+		var g = srgbToLinear(rgb.g);
+		var b = srgbToLinear(rgb.b);
+		return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+	}
+	// Contrast ratio between two hex colors, 1 (none) .. 21 (black on white).
+	function contrastRatio(hex1, hex2) {
+		var l1 = relativeLuminance(hex1);
+		var l2 = relativeLuminance(hex2);
+		var lighter = Math.max(l1, l2);
+		var darker = Math.min(l1, l2);
+		return (lighter + 0.05) / (darker + 0.05);
+	}
+	// Grade a ratio against WCAG 2.1 thresholds for normal/large text.
+	function wcagLevel(ratio, large) {
+		if (large) {
+			if (ratio >= 4.5) return "AAA";
+			if (ratio >= 3) return "AA";
+			return "Fail";
+		}
+		if (ratio >= 7) return "AAA";
+		if (ratio >= 4.5) return "AA";
+		return "Fail";
+	}
+	// Pick the most readable foreground for a background, optionally tinted to
+	// the background hue. Returns whichever of near-black/near-white scores best,
+	// then nudges lightness to reach AA (4.5:1) when the tint falls short.
+	function bestForeground(bgHex, opts) {
+		opts = opts || {};
+		var bg = hexToOklch(bgHex);
+		var tintC = opts.tint ? Math.min(bg.C, 0.04) : 0;
+		var dark = mk(0.18, tintC, bg.h);
+		var light = mk(0.985, Math.min(tintC, 0.02), bg.h);
+		var darkRatio = contrastRatio(bgHex, dark);
+		var lightRatio = contrastRatio(bgHex, light);
+		var pick = darkRatio >= lightRatio ? dark : light;
+		var target = opts.target || 4.5;
+		if (contrastRatio(bgHex, pick) >= target) return pick;
+		// Push toward the better-scoring extreme until it clears the target.
+		var goDarker = darkRatio >= lightRatio;
+		var fg = hexToOklch(pick);
+		for (var i = 0; i < 16 && contrastRatio(bgHex, oklchToHex(fg)) < target; i++) {
+			fg.L = goDarker ? Math.max(0, fg.L - 0.05) : Math.min(1, fg.L + 0.05);
+		}
+		return oklchToHex(fg);
+	}
+
 	/* ---- helpers -------------------------------------------------------- */
-	// Perceived lightness threshold to choose readable foreground text.
+	// Choose readable foreground text, guaranteed to meet WCAG AA where possible.
 	function readableOn(oklch) {
-		return oklch.L > 0.62 ? { L: 0.18, C: Math.min(oklch.C, 0.03), h: oklch.h }
-			: { L: 0.98, C: Math.min(oklch.C, 0.02), h: oklch.h };
+		return hexToOklch(bestForeground(oklchToHex(oklch), { tint: true, target: 4.5 }));
 	}
 	function mk(L, C, h) {
 		return oklchToHex({ L: L, C: C, h: h });
@@ -268,5 +322,8 @@
 		shades: shades,
 		generate: generate,
 		generateBoth: generateBoth,
+		contrastRatio: contrastRatio,
+		bestForeground: bestForeground,
+		wcagLevel: wcagLevel,
 	};
 })();

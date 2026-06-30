@@ -3,6 +3,10 @@ import json
 import frappe
 from frappe import _
 
+from theme_studio.theme_studio.doctype.theme_studio_theme.theme_studio_theme import (
+	TOKEN_FIELD_MAP,
+)
+
 USER_THEME_KEY = "theme_studio_theme"
 
 
@@ -104,6 +108,33 @@ def reset_user_theme() -> dict:
 	return resolve_theme()
 
 
+def _apply_theme_data(doc, data: dict) -> None:
+	"""Copy meta fields, core color tokens and extras from `data` onto `doc`.
+
+	`data["tokens"]` is a flat dict keyed by CSS custom-property name (e.g.
+	"primary-foreground"); we map those to DocType fields via TOKEN_FIELD_MAP and
+	stash any leftover tokens (sidebar-*, chart-*, …) in the tokens_json field.
+	"""
+	doc.appearance = data.get("appearance") or "Light"
+	doc.font_family = data.get("font_family") or "Inter"
+	doc.radius = data.get("radius") or "0.5rem"
+
+	tokens = data.get("tokens") or {}
+	for css_key, fieldname in TOKEN_FIELD_MAP.items():
+		if css_key in tokens:
+			doc.set(fieldname, tokens[css_key])
+
+	# Anything the studio sent that is not a first-class field becomes an extra,
+	# unless the caller already provided an explicit tokens_json blob.
+	extra = data.get("tokens_json")
+	if extra:
+		doc.tokens_json = extra if isinstance(extra, str) else json.dumps(extra, indent=2)
+	elif tokens:
+		reserved = set(TOKEN_FIELD_MAP) | {"radius", "font-family"}
+		leftovers = {k: v for k, v in tokens.items() if k not in reserved}
+		doc.tokens_json = json.dumps(leftovers, indent=2) if leftovers else None
+
+
 @frappe.whitelist()
 def save_theme(theme: str) -> dict:
 	"""Create or update a custom theme from the studio. `theme` is a JSON string."""
@@ -111,14 +142,6 @@ def save_theme(theme: str) -> dict:
 	data = theme if isinstance(theme, dict) else json.loads(theme)
 
 	name = data.get("name")
-	color_fields = [
-		"background", "foreground", "card", "card_foreground", "popover",
-		"popover_foreground", "primary", "primary_foreground", "secondary",
-		"secondary_foreground", "muted", "muted_foreground", "accent",
-		"accent_foreground", "destructive", "destructive_foreground",
-		"border", "input", "ring",
-	]
-
 	if name and frappe.db.exists("Theme Studio Theme", name):
 		doc = frappe.get_doc("Theme Studio Theme", name)
 		if doc.is_preset:
@@ -127,21 +150,46 @@ def save_theme(theme: str) -> dict:
 		doc = frappe.new_doc("Theme Studio Theme")
 		doc.theme_name = data.get("theme_name") or name or _("Custom Theme")
 
-	doc.appearance = data.get("appearance") or "Light"
-	doc.font_family = data.get("font_family") or "Inter"
-	doc.radius = data.get("radius") or "0.5rem"
-
-	tokens = data.get("tokens") or {}
-	for field in color_fields:
-		css_key = field.replace("_", "-")
-		if css_key in tokens:
-			doc.set(field, tokens[css_key])
-
-	extra = data.get("tokens_json")
-	if extra:
-		doc.tokens_json = extra if isinstance(extra, str) else json.dumps(extra, indent=2)
+	_apply_theme_data(doc, data)
 
 	doc.save(ignore_permissions=True)
+	frappe.cache().delete_keys("theme_studio:resolved:*")
+	return doc.as_payload()
+
+
+@frappe.whitelist()
+def import_theme(theme: str) -> dict:
+	"""Create a new custom theme from an exported JSON payload.
+
+	Never overwrites an existing theme: if the name collides, a numeric suffix
+	is appended. Presets cannot be created or replaced through this path.
+	"""
+	frappe.only_for("System Manager")
+	data = theme if isinstance(theme, dict) else json.loads(theme)
+
+	if not isinstance(data, dict):
+		frappe.throw(_("Imported theme must be a JSON object."))
+
+	tokens = data.get("tokens")
+	if not isinstance(tokens, dict) or not tokens:
+		frappe.throw(_("Imported theme is missing its color tokens."))
+
+	base_name = (data.get("theme_name") or _("Imported Theme")).strip()
+	new_name = base_name
+	suffix = 2
+	while frappe.db.exists("Theme Studio Theme", new_name):
+		new_name = f"{base_name} {suffix}"
+		suffix += 1
+
+	doc = frappe.new_doc("Theme Studio Theme")
+	doc.theme_name = new_name
+	doc.is_preset = 0
+	# Pull radius/font from the flat token dict when not given explicitly.
+	data.setdefault("radius", tokens.get("radius"))
+	data.setdefault("font_family", tokens.get("font-family"))
+	_apply_theme_data(doc, data)
+
+	doc.insert(ignore_permissions=True)
 	frappe.cache().delete_keys("theme_studio:resolved:*")
 	return doc.as_payload()
 
