@@ -507,10 +507,32 @@ html[data-theme-studio] .dt-cell {
 html[data-theme-studio] .dt-row:hover .dt-cell,
 html[data-theme-studio] .dt-cell--highlight {
 	background-color: var(--ts-accent) !important;
+	color: var(--ts-accent-foreground);
 }
 html[data-theme-studio] .dt-cell--focus {
 	border: 1px solid var(--ts-ring) !important;
 	box-shadow: var(--ts-ring-shadow);
+}
+/* Selected / checked rows in DataTable */
+html[data-theme-studio] .dt-row--highlight .dt-cell,
+html[data-theme-studio] .dt-row--active .dt-cell,
+html[data-theme-studio] .dt-cell--selected {
+	background-color: color-mix(in srgb, var(--ts-primary) 12%, var(--ts-card)) !important;
+	color: var(--ts-foreground) !important;
+}
+/* Row checkbox / selection controls */
+html[data-theme-studio] .dt-cell .row-index,
+html[data-theme-studio] .dt-cell .selection {
+	color: var(--ts-muted-foreground);
+}
+/* Sticky header shadow */
+html[data-theme-studio] .dt-scrollable .dt-header {
+	box-shadow: var(--ts-shadow-sm);
+}
+/* Empty state inside tables */
+html[data-theme-studio] .dt-scrollable .empty,
+html[data-theme-studio] .datatable .no-data {
+	color: var(--ts-muted-foreground);
 }
 
 /* ---- Grid / child tables ------------------------------------------------ */
@@ -525,10 +547,27 @@ html[data-theme-studio] .grid-heading-row {
 html[data-theme-studio] .grid-row:hover {
 	background-color: var(--ts-accent);
 }
+html[data-theme-studio] .grid-row.selected,
+html[data-theme-studio] .grid-row--selected {
+	background-color: color-mix(in srgb, var(--ts-primary) 12%, var(--ts-card)) !important;
+}
 html[data-theme-studio] .grid-footer,
 html[data-theme-studio] .grid-buttons {
 	background-color: var(--ts-card);
 	border-color: var(--ts-border);
+}
+/* Grid input cells and empty rows */
+html[data-theme-studio] .grid-row .input-area,
+html[data-theme-studio] .grid-row input[type="text"],
+html[data-theme-studio] .grid-row input[type="number"],
+html[data-theme-studio] .grid-row select {
+	background-color: var(--ts-background);
+	border-color: var(--ts-input);
+	color: var(--ts-foreground);
+}
+html[data-theme-studio] .grid-empty-row,
+html[data-theme-studio] .grid-row .static-area {
+	color: var(--ts-muted-foreground);
 }
 
 /* ---- Kanban ------------------------------------------------------------- */
@@ -837,17 +876,69 @@ html[data-theme-studio] .layout-side-section,
 html[data-theme-studio] .page-head,
 html[data-theme-studio] .form-section,
 html[data-theme-studio] .form-page,
+html[data-theme-studio] .form-layout,
 html[data-theme-studio] .frappe-card,
 html[data-theme-studio] .widget,
 html[data-theme-studio] .number-card,
 html[data-theme-studio] .list-row-container,
 html[data-theme-studio] .list-row-head,
+html[data-theme-studio] .list-row,
 html[data-theme-studio] .modal-content,
 html[data-theme-studio] .modal-header,
 html[data-theme-studio] .modal-footer,
+html[data-theme-studio] .modal-body,
 html[data-theme-studio] .dropdown-menu,
+html[data-theme-studio] .dropdown-item,
 html[data-theme-studio] .form-control,
-html[data-theme-studio] .btn {
+html[data-theme-studio] .input-with-feedback,
+html[data-theme-studio] .btn,
+html[data-theme-studio] .dt-scrollable,
+html[data-theme-studio] .datatable,
+html[data-theme-studio] .dt-header,
+html[data-theme-studio] .dt-row,
+html[data-theme-studio] .dt-cell,
+html[data-theme-studio] .dt-cell--header,
+html[data-theme-studio] .grid-heading-row,
+html[data-theme-studio] .grid-row,
+html[data-theme-studio] .grid-row .data-row,
+html[data-theme-studio] .grid-footer,
+html[data-theme-studio] .grid-buttons,
+html[data-theme-studio] .kanban .kanban-column,
+html[data-theme-studio] .kanban .kanban-card,
+html[data-theme-studio] .fc,
+html[data-theme-studio] .fc .fc-event,
+html[data-theme-studio] .tree .tree-link,
+html[data-theme-studio] .new-timeline .timeline-item,
+html[data-theme-studio] .comment-input-wrapper,
+html[data-theme-studio] .comment-box,
+html[data-theme-studio] .notifications-list,
+html[data-theme-studio] .notification-item,
+html[data-theme-studio] .badge,
+html[data-theme-studio] .indicator-pill,
+html[data-theme-studio] .tag-pill,
+html[data-theme-studio] .data-pill,
+html[data-theme-studio] .avatar,
+html[data-theme-studio] .avatar-frame,
+html[data-theme-studio] .progress,
+html[data-theme-studio] .progress-bar,
+html[data-theme-studio] .nav-tabs .nav-link,
+html[data-theme-studio] .form-tabs .nav-link,
+html[data-theme-studio] .tooltip,
+html[data-theme-studio] .tooltip .tooltip-inner,
+html[data-theme-studio] .popover,
+html[data-theme-studio] .popover .popover-body,
+html[data-theme-studio] .desk-alert,
+html[data-theme-studio] .alert,
+html[data-theme-studio] .search-dialog,
+html[data-theme-studio] .awesomplete > ul,
+html[data-theme-studio] .awesomplete > ul > li,
+html[data-theme-studio] .filter-selector .btn,
+html[data-theme-studio] .sort-selector .btn,
+html[data-theme-studio] .list-paging-area .btn-paging,
+html[data-theme-studio] .skeleton,
+html[data-theme-studio] .no-result,
+html[data-theme-studio] .msg-box,
+html[data-theme-studio] .empty-state {
 	/* Let Frappe's own stylesheet own the geometry. */
 	width: revert;
 	height: revert;

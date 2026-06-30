@@ -118,14 +118,36 @@ html[data-theme-studio] .ts-rail-icon {
 	transition: width 0.2s var(--ts-ease), height 0.2s var(--ts-ease);
 }
 
+/* Inner wrapper normalizes icon sizing regardless of how Frappe's icon
+   helper renders (inline SVG, sprite <use>, or icon font). */
+html[data-theme-studio] .ts-rail-icon-inner {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
 html[data-theme-studio] .ts-rail-icon svg,
-html[data-theme-studio] .ts-rail-icon .icon {
+html[data-theme-studio] .ts-rail-icon .icon,
+html[data-theme-studio] .ts-rail-icon-inner svg,
+html[data-theme-studio] .ts-rail-icon-inner .icon,
+html[data-theme-studio] .ts-rail-icon-inner use {
 	width: var(--ts-rail-icon-size) !important;
 	height: var(--ts-rail-icon-size) !important;
 	color: currentColor !important;
 	stroke: currentColor !important;
+	fill: none !important;
 	transition: color 0.15s var(--ts-ease), stroke 0.15s var(--ts-ease),
 		width 0.2s var(--ts-ease), height 0.2s var(--ts-ease);
+}
+
+/* Ensure sprite-based icons (svg > use) inherit currentColor too. */
+html[data-theme-studio] .ts-rail-icon-inner svg use,
+html[data-theme-studio] .ts-rail-icon svg use {
+	color: inherit;
+	stroke: inherit;
 }
 
 /* Initials fallback when a workspace has no icon. */
@@ -155,8 +177,14 @@ html[data-theme-studio] body.ts-rail-resizing .ts-rail-icon {
 
 html[data-theme-studio] body.ts-rail-expanded .ts-rail-icon svg,
 html[data-theme-studio] body.ts-rail-expanded .ts-rail-icon .icon,
+html[data-theme-studio] body.ts-rail-expanded .ts-rail-icon-inner svg,
+html[data-theme-studio] body.ts-rail-expanded .ts-rail-icon-inner .icon,
+html[data-theme-studio] body.ts-rail-expanded .ts-rail-icon-inner use,
 html[data-theme-studio] body.ts-rail-resizing .ts-rail-icon svg,
-html[data-theme-studio] body.ts-rail-resizing .ts-rail-icon .icon {
+html[data-theme-studio] body.ts-rail-resizing .ts-rail-icon .icon,
+html[data-theme-studio] body.ts-rail-resizing .ts-rail-icon-inner svg,
+html[data-theme-studio] body.ts-rail-resizing .ts-rail-icon-inner .icon,
+html[data-theme-studio] body.ts-rail-resizing .ts-rail-icon-inner use {
 	width: var(--ts-rail-icon-size-expanded) !important;
 	height: var(--ts-rail-icon-size-expanded) !important;
 }
@@ -580,6 +608,8 @@ html[data-theme-studio] body.ts-rail-expanded .ts-rail-toggle svg {
 /* ---- Frappe sidebar size guard -------------------------------------------
    Theme Studio must not alter Frappe's own sidebar geometry. These rules
    reset any accidental overrides so the panel keeps its stock v16 sizing.
+   The rail itself is Theme Studio's own markup, so it is intentionally
+   excluded — only Frappe's sidebar elements are guarded here.
    ------------------------------------------------------------------------- */
 html[data-theme-studio] .body-sidebar,
 html[data-theme-studio] .body-sidebar-container,
@@ -587,7 +617,11 @@ html[data-theme-studio] .standard-sidebar,
 html[data-theme-studio] .standard-sidebar-item,
 html[data-theme-studio] .standard-sidebar-item .item-anchor,
 html[data-theme-studio] .sidebar-header,
-html[data-theme-studio] .sidebar-item-container {
+html[data-theme-studio] .sidebar-item-container,
+html[data-theme-studio] .sidebar-item-icon,
+html[data-theme-studio] .sidebar-item-label,
+html[data-theme-studio] .sidebar-item-suffix,
+html[data-theme-studio] .keyboard-shortcut {
 	/* Frappe owns the geometry; we only re-skin. */
 	width: revert;
 	min-width: revert;

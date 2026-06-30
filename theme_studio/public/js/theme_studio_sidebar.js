@@ -136,6 +136,11 @@
 			this.$rail
 				.find(".ts-rail-item")
 				.on("mouseenter", function () {
+					// Preview the active theme's accent on hover so the rail
+					// reflects the theme's hover colors immediately.
+					if (window.theme_studio && theme_studio.current) {
+						theme_studio.hoverApply(theme_studio.current);
+					}
 					if (document.body.classList.contains("ts-rail-expanded")) return;
 					var label = $(this).data("workspace");
 					var $tip = $("body > .ts-rail-tooltip").filter(function () {
@@ -151,6 +156,9 @@
 						.addClass("visible");
 				})
 				.on("mouseleave", function () {
+					if (window.theme_studio) {
+						theme_studio.cancelPreview();
+					}
 					$("body > .ts-rail-tooltip").removeClass("visible");
 				});
 
@@ -297,10 +305,13 @@
 		get_icon_for_workspace: function (ws) {
 			var sidebar_data = (frappe.boot.workspace_sidebar_item || {})[ws.label.toLowerCase()];
 			if (sidebar_data && sidebar_data.header_icon) {
-				return frappe.utils.icon(sidebar_data.header_icon, "md", "", "", "", true);
+				var raw = frappe.utils.icon(sidebar_data.header_icon, "md", "", "", "", true);
+				// Wrap the icon so we can normalize its inner SVG/use sizing
+				// reliably regardless of how Frappe's icon helper renders it.
+				return '<span class="ts-rail-icon-inner">' + raw + "</span>";
 			}
 			var letter = ws.label.charAt(0).toUpperCase();
-			return '<span class="ts-rail-initials">' + letter + "</span>";
+			return '<span class="ts-rail-icon-inner"><span class="ts-rail-initials">' + letter + "</span></span>";
 		},
 
 		switch_workspace: function (workspace_name) {
