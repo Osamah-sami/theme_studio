@@ -210,10 +210,16 @@ def duplicate_theme(theme_name: str, new_name: str) -> dict:
 
 
 @frappe.whitelist()
-def delete_theme(theme_name: str) -> None:
+def delete_theme(theme_name: str) -> dict:
+	"""Delete a custom theme. Presets are protected.
+
+	Returns ``{"ok": True}`` on success or raises ``ValidationError`` for
+	presets / missing themes, so the caller always gets a definite answer.
+	"""
 	frappe.only_for("System Manager")
 	doc = frappe.get_doc("Theme Studio Theme", theme_name)
 	if doc.is_preset:
 		frappe.throw(_("Preset themes cannot be deleted."))
 	frappe.delete_doc("Theme Studio Theme", theme_name, ignore_permissions=True)
 	frappe.cache().delete_keys("theme_studio:resolved:*")
+	return {"ok": True}

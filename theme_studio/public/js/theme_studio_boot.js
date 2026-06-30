@@ -80,10 +80,11 @@
 	};
 
 	theme_studio.cancelPreview = function () {
+		// Only restore if a preview was actually active; otherwise leave the
+		// current theme untouched so we don't wipe a committed theme.
+		if (!theme_studio._previewBackup) return;
 		clearTokens();
-		if (theme_studio._previewBackup) {
-			applyPayload(theme_studio._previewBackup);
-		}
+		applyPayload(theme_studio._previewBackup);
 		theme_studio._previewBackup = null;
 	};
 

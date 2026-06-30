@@ -114,6 +114,15 @@ class ThemeStudio {
 		this.refresh();
 	}
 
+	/** Sanitize a hex color for safe use in inline style attributes.
+	 *  Returns a fallback if the value is not a valid 3- or 6-digit hex. */
+	safe_color(v) {
+		if (typeof v !== "string") return "#888888";
+		var h = v.trim().replace(/^#/, "");
+		if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+		return /^[0-9a-f]{6}$/i.test(h) ? "#" + h : "#888888";
+	}
+
 	setup_actions() {
 		this.page.set_primary_action(
 			__("New Theme"),
@@ -278,19 +287,27 @@ class ThemeStudio {
 		themes.forEach((theme) => {
 			const t = theme.tokens || {};
 			const isActive = theme.name === activeName;
+			const bg = this.safe_color(t.background);
+			const primary = this.safe_color(t.primary);
+			const primaryFg = this.safe_color(t["primary-foreground"]);
+			const muted = this.safe_color(t.muted);
+			const secondary = this.safe_color(t.secondary);
+			const accent = this.safe_color(t.accent);
+			const destructive = this.safe_color(t.destructive);
+			const border = this.safe_color(t.border);
 			const $card = $(`
 				<div class="ts-card ${isActive ? "is-active" : ""}" data-name="${frappe.utils.escape_html(theme.name)}">
-					<div class="ts-card-preview" style="background:${t.background};">
+					<div class="ts-card-preview" style="background:${bg};">
 						<div class="ts-card-bar">
-							<span class="ts-chip" style="background:${t.primary};color:${t["primary-foreground"]};">Aa</span>
-							<span class="ts-pill" style="flex:1;background:${t.muted};"></span>
+							<span class="ts-chip" style="background:${primary};color:${primaryFg};">Aa</span>
+							<span class="ts-pill" style="flex:1;background:${muted};"></span>
 						</div>
 						<div class="ts-card-bar">
-							<span class="ts-dot" style="background:${t.primary};"></span>
-							<span class="ts-dot" style="background:${t.secondary};"></span>
-							<span class="ts-dot" style="background:${t.accent};"></span>
-							<span class="ts-dot" style="background:${t.destructive};"></span>
-							<span class="ts-pill" style="flex:1;height:8px;background:${t.border};"></span>
+							<span class="ts-dot" style="background:${primary};"></span>
+							<span class="ts-dot" style="background:${secondary};"></span>
+							<span class="ts-dot" style="background:${accent};"></span>
+							<span class="ts-dot" style="background:${destructive};"></span>
+							<span class="ts-pill" style="flex:1;height:8px;background:${border};"></span>
 						</div>
 					</div>
 					<div class="ts-card-meta">

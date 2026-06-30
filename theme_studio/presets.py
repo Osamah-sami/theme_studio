@@ -179,5 +179,3 @@ def install_presets():
 		settings.default_theme = "Shadcn Light"
 		settings.flags.ignore_permissions = True
 		settings.save()
-
-	frappe.db.commit()

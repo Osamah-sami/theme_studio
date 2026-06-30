@@ -83,6 +83,10 @@
 		build_workspace_rail: function () {
 			if (this.rail_built) return;
 
+			// Clean up any stale tooltips from a previous build so they
+			// don't accumulate on <body> across re-renders.
+			$("body > .ts-rail-tooltip").remove();
+
 			var workspaces = this.get_workspaces();
 			if (!workspaces.length) return;
 

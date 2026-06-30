@@ -29,6 +29,13 @@ html[data-theme-studio] {
 	--ts-rail-bg: color-mix(in srgb, var(--ts-sidebar) 92%, var(--ts-foreground));
 	--ts-rail-border: var(--ts-sidebar-border);
 	--ts-rail-fg: var(--ts-sidebar-foreground);
+
+	/* Fallbacks for shared tokens that shadcn_desk.css defines. If this
+	   stylesheet loads first (as it does in hooks.py ordering), these
+	   prevent transitions/shadows from being unset on first paint. */
+	--ts-ease: cubic-bezier(0.16, 1, 0.3, 1);
+	--ts-ring-shadow: 0 0 0 2px color-mix(in srgb, var(--ts-ring, #6366f1) 38%, transparent);
+	--ts-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }
 
 html[data-theme-studio] body.ts-rail-expanded {
