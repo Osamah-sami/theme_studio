@@ -25,7 +25,7 @@ custom themes from a clean visual editor — all from a dedicated Desk page.
 
 ## Requirements
 
-- A working [Frappe bench](https://frappeframework.com/docs/user/en/installation) (Frappe v15 or v16).
+- A working [Frappe bench](https://frappeframework.com/docs/user/en/installation) (Frappe v16).
 - Python 3.10+ and Node as required by your bench.
 
 ## Quick install (script)

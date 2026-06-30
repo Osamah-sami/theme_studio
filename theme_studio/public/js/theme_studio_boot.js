@@ -59,7 +59,8 @@
 	/** Apply a fully-resolved theme payload (from the server). */
 	theme_studio.apply = applyPayload;
 
-	/** Live preview: apply tokens without persisting. Pass null to restore. */
+	/** Live preview: apply tokens without persisting. Pass null to restore.
+	 *  Used by the Theme Studio page to preview a theme on hover. */
 	theme_studio.preview = function (payload) {
 		if (!theme_studio._previewBackup) {
 			theme_studio._previewBackup = theme_studio.current;
@@ -69,6 +70,13 @@
 		} else {
 			theme_studio.cancelPreview();
 		}
+	};
+
+	/** Apply a theme on hover and commit it on click. This is the "apply on
+	 *  press" behaviour: hovering a theme card previews it on the desk, and
+	 *  clicking the card (or its Apply button) persists it. */
+	theme_studio.hoverApply = function (payload) {
+		theme_studio.preview(payload);
 	};
 
 	theme_studio.cancelPreview = function () {

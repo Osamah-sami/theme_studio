@@ -8,8 +8,10 @@ app_version = "0.1.0"
 
 # Apps
 # ------------------
-
-# required_apps = []
+# Theme Studio targets Frappe v16. It only re-skins colours, borders, radii
+# and shadows — it never overrides Frappe's component geometry (width, height,
+# padding, margin, font-size) so the Desk layout stays stock.
+required_apps = ["frappe"]
 
 # Includes in <head>
 # ------------------

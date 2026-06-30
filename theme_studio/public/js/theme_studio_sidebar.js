@@ -186,6 +186,13 @@
 				this.$rail.find(".ts-rail-search-box input").val("");
 				this.filter_rail("");
 			}
+			/* Emit a custom event so other Frappe components can react to the
+			   rail open/close without coupling to Theme Studio internals. */
+			try {
+				$(document).trigger("ts-rail-toggle", [!!expanded]);
+			} catch (e) {
+				/* ignore */
+			}
 		},
 
 		setup_rail_toggle: function () {

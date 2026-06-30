@@ -12,10 +12,17 @@
    ========================================================================= */
 
 html[data-theme-studio] {
-	/* Rail geometry — collapsed (icons only) and expanded (icons + labels). */
+	/* Rail geometry — collapsed (icons only) and expanded (icons + labels).
+	   Widths match Frappe v16's own sidebar widths so the layout doesn't shift. */
 	--ts-rail-width: 60px;
-	--ts-rail-width-expanded: 200px;
+	--ts-rail-width-expanded: 240px;
 	--ts-sidebar-panel-width: 240px;
+
+	/* Icon sizes kept consistent across collapsed / expanded states. */
+	--ts-rail-icon-size: 20px;
+	--ts-rail-icon-size-expanded: 18px;
+	--ts-rail-item-size: 44px;
+	--ts-rail-item-size-expanded: 38px;
 
 	/* A slightly recessed surface so the rail reads as a distinct column while
 	   still tracking the theme. Falls back to the plain sidebar token. */
@@ -63,15 +70,16 @@ html[data-theme-studio] .ts-rail-top {
 
 /* ---- Rail item --------------------------------------------------------- */
 html[data-theme-studio] .ts-rail-item {
-	width: 44px;
-	height: 44px;
+	width: var(--ts-rail-item-size);
+	height: var(--ts-rail-item-size);
 	flex-shrink: 0;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	border-radius: calc(var(--ts-radius) + 0.125rem);
 	cursor: pointer;
-	transition: background-color 0.15s var(--ts-ease), color 0.15s var(--ts-ease);
+	transition: background-color 0.15s var(--ts-ease), color 0.15s var(--ts-ease),
+		width 0.2s var(--ts-ease), height 0.2s var(--ts-ease);
 	position: relative;
 	color: color-mix(in srgb, var(--ts-rail-fg) 60%, transparent);
 }
@@ -100,21 +108,24 @@ html[data-theme-studio] .ts-rail-item.active::before {
 
 /* ---- Rail icon --------------------------------------------------------- */
 html[data-theme-studio] .ts-rail-icon {
-	width: 24px;
-	height: 24px;
+	width: var(--ts-rail-icon-size);
+	height: var(--ts-rail-icon-size);
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	overflow: visible;
+	flex-shrink: 0;
+	transition: width 0.2s var(--ts-ease), height 0.2s var(--ts-ease);
 }
 
 html[data-theme-studio] .ts-rail-icon svg,
 html[data-theme-studio] .ts-rail-icon .icon {
-	width: 20px !important;
-	height: 20px !important;
+	width: var(--ts-rail-icon-size) !important;
+	height: var(--ts-rail-icon-size) !important;
 	color: currentColor !important;
 	stroke: currentColor !important;
-	transition: color 0.15s var(--ts-ease), stroke 0.15s var(--ts-ease);
+	transition: color 0.15s var(--ts-ease), stroke 0.15s var(--ts-ease),
+		width 0.2s var(--ts-ease), height 0.2s var(--ts-ease);
 }
 
 /* Initials fallback when a workspace has no icon. */
@@ -130,18 +141,24 @@ html[data-theme-studio] .ts-rail-initials {
 html[data-theme-studio] body.ts-rail-expanded .ts-rail-item,
 html[data-theme-studio] body.ts-rail-resizing .ts-rail-item {
 	width: 100%;
-	height: 36px;
+	height: var(--ts-rail-item-size-expanded);
 	justify-content: flex-start;
-	gap: 8px;
-	padding: 0 10px;
+	gap: 10px;
+	padding: 0 12px;
+}
+
+html[data-theme-studio] body.ts-rail-expanded .ts-rail-icon,
+html[data-theme-studio] body.ts-rail-resizing .ts-rail-icon {
+	width: var(--ts-rail-icon-size-expanded) !important;
+	height: var(--ts-rail-icon-size-expanded) !important;
 }
 
 html[data-theme-studio] body.ts-rail-expanded .ts-rail-icon svg,
 html[data-theme-studio] body.ts-rail-expanded .ts-rail-icon .icon,
 html[data-theme-studio] body.ts-rail-resizing .ts-rail-icon svg,
 html[data-theme-studio] body.ts-rail-resizing .ts-rail-icon .icon {
-	width: 16px !important;
-	height: 16px !important;
+	width: var(--ts-rail-icon-size-expanded) !important;
+	height: var(--ts-rail-icon-size-expanded) !important;
 }
 
 html[data-theme-studio] .ts-rail-label {
@@ -155,11 +172,14 @@ html[data-theme-studio] .ts-rail-label {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	opacity: 0;
+	transition: opacity 0.15s var(--ts-ease) 0.05s;
 }
 
 html[data-theme-studio] body.ts-rail-expanded .ts-rail-label,
 html[data-theme-studio] body.ts-rail-resizing .ts-rail-label {
 	display: block;
+	opacity: 1;
 }
 
 /* ---- Rail search ------------------------------------------------------- */
@@ -171,8 +191,8 @@ html[data-theme-studio] .ts-rail-search {
 }
 
 html[data-theme-studio] .ts-rail-search-btn {
-	width: 44px;
-	height: 40px;
+	width: var(--ts-rail-item-size);
+	height: var(--ts-rail-item-size);
 	margin: 0 auto;
 	display: flex;
 	align-items: center;
@@ -189,8 +209,8 @@ html[data-theme-studio] .ts-rail-search-btn:hover {
 }
 
 html[data-theme-studio] .ts-rail-search-btn svg {
-	width: 18px;
-	height: 18px;
+	width: var(--ts-rail-icon-size);
+	height: var(--ts-rail-icon-size);
 	color: currentColor;
 }
 
@@ -289,8 +309,8 @@ html[data-theme-studio] .ts-rail-bottom {
 }
 
 html[data-theme-studio] .ts-rail-toggle {
-	width: 44px;
-	height: 36px;
+	width: var(--ts-rail-item-size);
+	height: var(--ts-rail-item-size-expanded);
 	margin: 0 auto;
 	display: flex;
 	align-items: center;
@@ -298,7 +318,8 @@ html[data-theme-studio] .ts-rail-toggle {
 	border-radius: var(--ts-radius);
 	cursor: pointer;
 	color: color-mix(in srgb, var(--ts-rail-fg) 55%, transparent);
-	transition: background-color 0.15s var(--ts-ease), color 0.15s var(--ts-ease);
+	transition: background-color 0.15s var(--ts-ease), color 0.15s var(--ts-ease),
+		width 0.2s var(--ts-ease);
 }
 
 html[data-theme-studio] body.ts-rail-expanded .ts-rail-toggle {
@@ -311,10 +332,10 @@ html[data-theme-studio] .ts-rail-toggle:hover {
 }
 
 html[data-theme-studio] .ts-rail-toggle svg {
-	width: 16px;
-	height: 16px;
+	width: var(--ts-rail-icon-size-expanded);
+	height: var(--ts-rail-icon-size-expanded);
 	color: currentColor;
-	transition: transform 0.2s var(--ts-ease);
+	transition: transform 0.25s var(--ts-ease);
 }
 
 html[data-theme-studio] body.ts-rail-expanded .ts-rail-toggle svg {
@@ -432,11 +453,8 @@ html[data-theme-studio] .body-sidebar .standard-sidebar-item {
 	margin: 0 0 1px;
 }
 html[data-theme-studio] .body-sidebar .standard-sidebar-item .item-anchor {
-	height: 36px;
-	padding: 0 10px;
 	border-radius: var(--ts-radius);
 	color: color-mix(in srgb, var(--ts-sidebar-foreground) 75%, transparent) !important;
-	gap: 8px;
 	transition: background-color 0.15s var(--ts-ease), color 0.15s var(--ts-ease);
 }
 
@@ -522,4 +540,63 @@ html[data-theme-studio] body.ts-dual-sidebar .overlay {
 	html[data-theme-studio] .ts-workspace-rail {
 		display: none;
 	}
+}
+
+/* =========================================================================
+   5. Smooth open/close transitions + Frappe size preservation
+   ========================================================================= */
+
+/* Smooth width transition when the rail expands or collapses. */
+html[data-theme-studio] .ts-workspace-rail {
+	transition: width 0.22s var(--ts-ease), min-width 0.22s var(--ts-ease),
+		background-color 0.2s var(--ts-ease), border-color 0.2s var(--ts-ease);
+}
+
+/* The Frappe sidebar panel slides in/out smoothly. */
+html[data-theme-studio] .body-sidebar-container {
+	transition: width 0.22s var(--ts-ease), transform 0.22s var(--ts-ease),
+		opacity 0.18s var(--ts-ease);
+}
+
+/* Rail items fade their labels in/out instead of popping. */
+html[data-theme-studio] .ts-rail-item {
+	transition: background-color 0.15s var(--ts-ease), color 0.15s var(--ts-ease),
+		width 0.2s var(--ts-ease), height 0.2s var(--ts-ease),
+		padding 0.2s var(--ts-ease), gap 0.2s var(--ts-ease);
+}
+
+/* Active / pressed state on rail items — theme applies on click too. */
+html[data-theme-studio] .ts-rail-item:active,
+html[data-theme-studio] .ts-rail-search-btn:active,
+html[data-theme-studio] .ts-rail-toggle:active {
+	filter: brightness(0.92);
+}
+
+/* Rotate the toggle chevron when expanded for a clear visual cue. */
+html[data-theme-studio] body.ts-rail-expanded .ts-rail-toggle svg {
+	transform: rotate(180deg);
+}
+
+/* ---- Frappe sidebar size guard -------------------------------------------
+   Theme Studio must not alter Frappe's own sidebar geometry. These rules
+   reset any accidental overrides so the panel keeps its stock v16 sizing.
+   ------------------------------------------------------------------------- */
+html[data-theme-studio] .body-sidebar,
+html[data-theme-studio] .body-sidebar-container,
+html[data-theme-studio] .standard-sidebar,
+html[data-theme-studio] .standard-sidebar-item,
+html[data-theme-studio] .standard-sidebar-item .item-anchor,
+html[data-theme-studio] .sidebar-header,
+html[data-theme-studio] .sidebar-item-container {
+	/* Frappe owns the geometry; we only re-skin. */
+	width: revert;
+	min-width: revert;
+	max-width: revert;
+	height: revert;
+	min-height: revert;
+	padding: revert;
+	margin: revert;
+	gap: revert;
+	font-size: revert;
+	line-height: revert;
 }

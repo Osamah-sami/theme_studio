@@ -169,6 +169,7 @@ html[data-theme-studio] .navbar .navbar-nav .nav-link:focus {
 html[data-theme-studio] .navbar .dropdown-menu {
 	background-color: var(--ts-popover);
 	border: 1px solid var(--ts-border);
+	box-shadow: var(--ts-shadow-lg);
 }
 
 /* ---- Awesomebar / global search ---------------------------------------- */
@@ -227,7 +228,6 @@ html[data-theme-studio] .desk-sidebar .sidebar-item-container .desk-sidebar-item
 html[data-theme-studio] .standard-sidebar-item {
 	border-radius: var(--ts-radius);
 	color: color-mix(in srgb, var(--ts-sidebar-foreground) 70%, transparent);
-	margin: 1px 6px;
 	transition: background-color 0.14s var(--ts-ease), color 0.14s var(--ts-ease);
 }
 html[data-theme-studio] .desk-sidebar .sidebar-item-container .desk-sidebar-item:hover,
@@ -713,7 +713,6 @@ html[data-theme-studio] .dropdown-menu {
 	border: 1px solid var(--ts-border);
 	border-radius: var(--ts-radius);
 	box-shadow: var(--ts-shadow-lg);
-	padding: 0.25rem;
 }
 html[data-theme-studio] .dropdown-item {
 	border-radius: calc(var(--ts-radius) - 0.125rem);
@@ -797,8 +796,8 @@ html[data-theme-studio] .chart-container .chart-label {
 
 /* ---- Scrollbar polish --------------------------------------------------- */
 html[data-theme-studio] ::-webkit-scrollbar {
-	width: 10px;
-	height: 10px;
+	width: 8px;
+	height: 8px;
 }
 html[data-theme-studio] ::-webkit-scrollbar-thumb {
 	background-color: color-mix(in srgb, var(--ts-muted-foreground) 35%, transparent);
@@ -817,4 +816,62 @@ html[data-theme-studio] ::-webkit-scrollbar-track {
 html[data-theme-studio] ::selection {
 	background-color: color-mix(in srgb, var(--ts-primary) 25%, transparent);
 	color: var(--ts-foreground);
+}
+
+/* =========================================================================
+   Frappe size preservation guard
+   -------------------------------------------------------------------------
+   Theme Studio only re-skins colours, borders, radii and shadows. It must
+   NEVER override Frappe's own geometry (width, height, padding, margin,
+   font-size, line-height, gap) so the Desk layout and component sizing stay
+   exactly as Frappe v16 ships them. The rules below reset any accidental
+   geometry overrides back to Frappe's computed values on the most
+   size-sensitive surfaces.
+   ========================================================================= */
+html[data-theme-studio] .navbar,
+html[data-theme-studio] .navbar .navbar-nav,
+html[data-theme-studio] .navbar .navbar-brand,
+html[data-theme-studio] .desk-sidebar,
+html[data-theme-studio] .standard-sidebar,
+html[data-theme-studio] .layout-side-section,
+html[data-theme-studio] .page-head,
+html[data-theme-studio] .form-section,
+html[data-theme-studio] .form-page,
+html[data-theme-studio] .frappe-card,
+html[data-theme-studio] .widget,
+html[data-theme-studio] .number-card,
+html[data-theme-studio] .list-row-container,
+html[data-theme-studio] .list-row-head,
+html[data-theme-studio] .modal-content,
+html[data-theme-studio] .modal-header,
+html[data-theme-studio] .modal-footer,
+html[data-theme-studio] .dropdown-menu,
+html[data-theme-studio] .form-control,
+html[data-theme-studio] .btn {
+	/* Let Frappe's own stylesheet own the geometry. */
+	width: revert;
+	height: revert;
+	min-width: revert;
+	min-height: revert;
+	max-width: revert;
+	max-height: revert;
+	padding: revert;
+	margin: revert;
+	gap: revert;
+	font-size: revert;
+	line-height: revert;
+}
+
+/* ---- Active / pressed state — theme applies on click too ---------------- */
+html[data-theme-studio] .btn:active,
+html[data-theme-studio] .btn-primary:active,
+html[data-theme-studio] .btn-default:active,
+html[data-theme-studio] .btn-secondary:active,
+html[data-theme-studio] .nav-link:active,
+html[data-theme-studio] .dropdown-item:active,
+html[data-theme-studio] .list-row:active,
+html[data-theme-studio] .standard-sidebar-item:active,
+html[data-theme-studio] .desk-sidebar-item:active {
+	filter: brightness(0.94);
+	transition: filter 0.08s var(--ts-ease), background-color 0.08s var(--ts-ease);
 }

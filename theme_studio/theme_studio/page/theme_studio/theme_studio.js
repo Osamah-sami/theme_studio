@@ -343,11 +343,16 @@ class ThemeStudio {
 					});
 			}
 
-			// Hover preview on the actual desk.
+			// Hover previews the theme on the desk; click applies it permanently.
 			$card
 				.on("mouseenter", () => window.theme_studio.preview(this.payload_of(theme)))
 				.on("mouseleave", () => window.theme_studio.cancelPreview())
-				.on("click", () => this.open_editor(theme));
+				.on("click", () => {
+					// A click on the card body (not a button) applies the theme
+					// immediately — the theme takes effect on hover and is
+					// committed on click, matching the "apply on press" request.
+					this.apply_theme(theme, "user");
+				});
 
 			$grid.append($card);
 		});
