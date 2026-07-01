@@ -756,7 +756,7 @@ select.input:active {
 
 .status-in_progress {
   background: var(--primary-soft);
-  color: var(--primary-300);
+  color: var(--primary-400);
 }
 
 .status-done {
@@ -866,7 +866,7 @@ select.input:active {
   justify-content: space-between;
   padding: 20px 24px;
   border-bottom: 1px solid var(--border);
-  background: var(--secondary);
+  background: var(--muted);
 }
 
 .modal-head h2 {
@@ -893,7 +893,7 @@ select.input:active {
   gap: 10px;
   padding: 16px 24px;
   border-top: 1px solid var(--border);
-  background: var(--secondary);
+  background: var(--muted);
 }
 
 /* ---------- Loading ---------- */
@@ -976,7 +976,7 @@ select.input:active {
 .theme-dropdown {
   position: absolute;
   top: calc(100% + 8px);
-  left: 0;
+  right: 0;
   min-width: 280px;
   background: var(--card);
   border: 1px solid var(--border);
@@ -1185,8 +1185,8 @@ select.input:active {
   }
   .theme-dropdown {
     position: fixed;
-    left: 16px;
     right: 16px;
+    left: 16px;
     min-width: auto;
   }
   .theme-presets {
@@ -1194,7 +1194,7 @@ select.input:active {
   }
 }
 
-/* Light theme header colors - applied via CSS when data-theme=light */
+/* Light theme adjustments */
 [data-theme='light'] {
   color-scheme: light;
 }
@@ -1206,6 +1206,56 @@ select.input:active {
 
 [data-theme='light'] .brand-logo {
   color: #fff;
+}
+
+[data-theme='light'] .modal-overlay {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+[data-theme='light'] .auth-error {
+  background: rgba(220, 38, 38, 0.1);
+  border-color: rgba(220, 38, 38, 0.3);
+  color: #991b1b;
+}
+
+[data-theme='light'] .badge-high {
+  color: #b91c1c;
+  border-color: rgba(185, 28, 28, 0.4);
+  background: rgba(185, 28, 28, 0.08);
+}
+
+[data-theme='light'] .badge-medium {
+  color: #b45309;
+  border-color: rgba(180, 83, 9, 0.4);
+  background: rgba(180, 83, 9, 0.08);
+}
+
+[data-theme='light'] .status-todo {
+  background: rgba(100, 116, 139, 0.2);
+  color: #475569;
+}
+
+[data-theme='light'] .status-in_progress {
+  background: rgba(37, 99, 235, 0.15);
+  color: var(--primary-700);
+}
+
+[data-theme='light'] .status-done {
+  background: rgba(22, 163, 74, 0.15);
+  color: #15803d;
+}
+
+[data-theme='light'] .due-date.overdue {
+  color: #b91c1c;
+}
+
+[data-theme='light'] .toast.error {
+  border-color: rgba(185, 28, 28, 0.4);
+  color: #991b1b;
+}
+
+[data-theme='light'] .input::placeholder {
+  color: #a1a1aa;
 }
 
 /* Focus ring for accessibility */

@@ -179,7 +179,7 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="stat-card">
-            <div className="stat-icon" style={{ background: 'rgba(34,197,94,0.15)', color: '#86efac' }}>
+            <div className="stat-icon" style={{ background: 'rgba(34,197,94,0.15)', color: 'var(--success)' }}>
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20 6L9 17l-5-5" />
               </svg>
