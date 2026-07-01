@@ -325,14 +325,13 @@ html[data-theme-studio] .page-head .page-title .title-area .title-text {
 /* ---- Buttons ------------------------------------------------------------ */
 html[data-theme-studio] .btn {
 	border-radius: var(--ts-radius);
-	font-weight: 500;
 	box-shadow: none;
 	transition: background-color 0.14s var(--ts-ease),
 		border-color 0.14s var(--ts-ease), opacity 0.14s var(--ts-ease),
-		box-shadow 0.14s var(--ts-ease), transform 0.06s var(--ts-ease);
+		box-shadow 0.14s var(--ts-ease);
 }
 html[data-theme-studio] .btn:active {
-	transform: translateY(0.5px) scale(0.99);
+	transform: scale(0.98);
 }
 html[data-theme-studio] .btn:focus-visible {
 	outline: none;
@@ -498,11 +497,17 @@ html[data-theme-studio] .dt-cell--header {
 	background-color: var(--ts-secondary) !important;
 	color: var(--ts-secondary-foreground) !important;
 	border-color: var(--ts-border) !important;
+	height: 40px;
+	font-size: 12px;
+	font-weight: 600;
 }
 html[data-theme-studio] .dt-cell {
 	border-color: var(--ts-border) !important;
 	background-color: var(--ts-card);
 	color: var(--ts-card-foreground);
+	height: 40px;
+	padding: 8px 12px;
+	font-size: 13px;
 }
 html[data-theme-studio] .dt-row:hover .dt-cell,
 html[data-theme-studio] .dt-cell--highlight {
@@ -524,6 +529,7 @@ html[data-theme-studio] .dt-cell--selected {
 html[data-theme-studio] .dt-cell .row-index,
 html[data-theme-studio] .dt-cell .selection {
 	color: var(--ts-muted-foreground);
+	width: 32px;
 }
 /* Sticky header shadow */
 html[data-theme-studio] .dt-scrollable .dt-header {
@@ -543,6 +549,12 @@ html[data-theme-studio] .grid-row .data-row {
 html[data-theme-studio] .grid-heading-row {
 	background-color: var(--ts-secondary);
 	color: var(--ts-secondary-foreground);
+	height: 36px;
+	font-size: 12px;
+	font-weight: 600;
+}
+html[data-theme-studio] .grid-row {
+	height: 40px;
 }
 html[data-theme-studio] .grid-row:hover {
 	background-color: var(--ts-accent);
@@ -555,6 +567,7 @@ html[data-theme-studio] .grid-footer,
 html[data-theme-studio] .grid-buttons {
 	background-color: var(--ts-card);
 	border-color: var(--ts-border);
+	height: 44px;
 }
 /* Grid input cells and empty rows */
 html[data-theme-studio] .grid-row .input-area,
@@ -564,6 +577,8 @@ html[data-theme-studio] .grid-row select {
 	background-color: var(--ts-background);
 	border-color: var(--ts-input);
 	color: var(--ts-foreground);
+	height: 32px;
+	font-size: 13px;
 }
 html[data-theme-studio] .grid-empty-row,
 html[data-theme-studio] .grid-row .static-area {
@@ -578,6 +593,9 @@ html[data-theme-studio] .kanban .kanban-column {
 }
 html[data-theme-studio] .kanban .kanban-column .kanban-column-title {
 	color: var(--ts-secondary-foreground);
+	font-size: 13px;
+	font-weight: 600;
+	padding: 10px 12px;
 }
 html[data-theme-studio] .kanban .kanban-card,
 html[data-theme-studio] .kanban .kanban-card-wrapper .kanban-card {
@@ -586,12 +604,16 @@ html[data-theme-studio] .kanban .kanban-card-wrapper .kanban-card {
 	border-radius: var(--ts-radius);
 	box-shadow: var(--ts-shadow-sm);
 	color: var(--ts-card-foreground);
+	padding: 10px 12px;
+	margin-bottom: 8px;
 }
 html[data-theme-studio] .kanban .kanban-card:hover {
 	box-shadow: var(--ts-shadow-md);
 }
 html[data-theme-studio] .kanban .add-card {
 	color: var(--ts-muted-foreground);
+	font-size: 12px;
+	padding: 8px 12px;
 }
 
 /* ---- Calendar (FullCalendar) ------------------------------------------- */
@@ -870,6 +892,7 @@ html[data-theme-studio] ::selection {
 html[data-theme-studio] .navbar,
 html[data-theme-studio] .navbar .navbar-nav,
 html[data-theme-studio] .navbar .navbar-brand,
+html[data-theme-studio] .navbar .navbar-header,
 html[data-theme-studio] .desk-sidebar,
 html[data-theme-studio] .standard-sidebar,
 html[data-theme-studio] .layout-side-section,
@@ -892,6 +915,8 @@ html[data-theme-studio] .dropdown-item,
 html[data-theme-studio] .form-control,
 html[data-theme-studio] .input-with-feedback,
 html[data-theme-studio] .btn,
+html[data-theme-studio] .btn-sm,
+html[data-theme-studio] .btn-xs,
 html[data-theme-studio] .dt-scrollable,
 html[data-theme-studio] .datatable,
 html[data-theme-studio] .dt-header,
@@ -919,6 +944,7 @@ html[data-theme-studio] .tag-pill,
 html[data-theme-studio] .data-pill,
 html[data-theme-studio] .avatar,
 html[data-theme-studio] .avatar-frame,
+html[data-theme-studio] .avatar-group,
 html[data-theme-studio] .progress,
 html[data-theme-studio] .progress-bar,
 html[data-theme-studio] .nav-tabs .nav-link,
@@ -938,7 +964,34 @@ html[data-theme-studio] .list-paging-area .btn-paging,
 html[data-theme-studio] .skeleton,
 html[data-theme-studio] .no-result,
 html[data-theme-studio] .msg-box,
-html[data-theme-studio] .empty-state {
+html[data-theme-studio] .empty-state,
+html[data-theme-studio] .standard-sidebar-item,
+html[data-theme-studio] .desk-sidebar-item,
+html[data-theme-studio] .sidebar-item-container,
+html[data-theme-studio] .sidebar-item-icon,
+html[data-theme-studio] .sidebar-item-label,
+html[data-theme-studio] .form-group,
+html[data-theme-studio] .control-label,
+html[data-theme-studio] .section-head,
+html[data-theme-studio] .section-body,
+html[data-theme-studio] .frappe-control,
+html[data-theme-studio] .input-group,
+html[data-theme-studio] .input-group-addon,
+html[data-theme-studio] .checkbox,
+html[data-theme-studio] .checkbox .label-area,
+html[data-theme-studio] .like-disabled-input,
+html[data-theme-studio] .link-btn,
+html[data-theme-studio] .btn-group,
+html[data-theme-studio] .btn-group .btn,
+html[data-theme-studio] .page-title,
+html[data-theme-studio] .title-text,
+html[data-theme-studio] .title-area,
+html[data-theme-studio] .title-icon,
+html[data-theme-studio] .timeline-content,
+html[data-theme-studio] .timeline-dot,
+html[data-theme-studio] .timeline-items,
+html[data-theme-studio] .menu-item,
+html[data-theme-studio] .menu-item-label {
 	/* Let Frappe's own stylesheet own the geometry. */
 	width: revert;
 	height: revert;
@@ -965,4 +1018,104 @@ html[data-theme-studio] .standard-sidebar-item:active,
 html[data-theme-studio] .desk-sidebar-item:active {
 	filter: brightness(0.94);
 	transition: filter 0.08s var(--ts-ease), background-color 0.08s var(--ts-ease);
+}
+
+/* ---- Frappe v16 Button Size Preservation ----------------------------------
+   Ensure buttons keep their original Frappe sizing (no Shadcn overrides).
+   Frappe v16 uses specific padding for different button sizes:
+   - Default .btn: padding 6px 12px (approx)
+   - .btn-sm: smaller padding for toolbars
+   - .btn-xs: minimal padding for inline actions
+   ========================================================================== */
+html[data-theme-studio] .btn {
+	/* Frappe's default button height is ~34px with padding 6px 12px */
+	padding: 6px 12px;
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 1.42857143;
+}
+
+html[data-theme-studio] .btn-sm {
+	/* Frappe's small button: ~30px height */
+	padding: 5px 10px;
+	font-size: 12px;
+	line-height: 1.5;
+}
+
+html[data-theme-studio] .btn-xs {
+	/* Frappe's extra small button: ~26px height */
+	padding: 3px 6px;
+	font-size: 11px;
+	line-height: 1.5;
+}
+
+/* ---- Frappe v16 Form Control Sizes ---------------------------------------
+   Preserve Frappe's input heights and padding.
+   Default input: 36px height with 8px 12px padding
+   ========================================================================== */
+html[data-theme-studio] .form-control,
+html[data-theme-studio] .input-with-feedback {
+	padding: 8px 12px;
+	font-size: 13px;
+	line-height: 1.42857143;
+	height: 36px;
+}
+
+html[data-theme-studio] textarea.form-control {
+	height: auto;
+	min-height: 80px;
+}
+
+html[data-theme-studio] select.form-control {
+	/* Preserve Frappe's select height */
+	height: 36px;
+}
+
+/* ---- Frappe v16 Sidebar Size Preservation --------------------------------
+   Ensure sidebar items keep Frappe's original sizing:
+   - Sidebar item height: ~32px
+   - Icon size: 16px
+   ========================================================================== */
+html[data-theme-studio] .standard-sidebar-item,
+html[data-theme-studio] .desk-sidebar-item {
+	height: 32px;
+	padding: 6px 10px;
+}
+
+html[data-theme-studio] .sidebar-item-icon {
+	width: 16px;
+	height: 16px;
+}
+
+html[data-theme-studio] .sidebar-item-label {
+	font-size: 13px;
+	font-weight: 500;
+}
+
+/* ---- Frappe v16 Navbar Preservation ---------------------------------------
+   Preserve navbar height and element sizing.
+   Navbar height: 56px in Frappe v16
+   ========================================================================== */
+html[data-theme-studio] .navbar {
+	min-height: 56px;
+}
+
+html[data-theme-studio] .navbar .nav-link {
+	padding: 8px 12px;
+	font-size: 13px;
+}
+
+/* ---- Frappe v16 Modal Preservation ----------------------------------------
+   Preserve modal dimensions and padding.
+   ========================================================================== */
+html[data-theme-studio] .modal-header {
+	padding: 12px 16px;
+}
+
+html[data-theme-studio] .modal-body {
+	padding: 16px;
+}
+
+html[data-theme-studio] .modal-footer {
+	padding: 12px 16px;
 }
