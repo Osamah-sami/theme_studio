@@ -1,10 +1,21 @@
+import { useEffect, useState } from 'react'
 import { AuthProvider, useAuth } from './lib/auth'
 import AuthScreen from './components/AuthScreen'
 import Dashboard from './components/Dashboard'
+import { loadTheme, generateTheme, applyTheme } from './lib/theme'
 
 function Gate() {
   const { user, loading } = useAuth()
-  if (loading) {
+  const [themeLoaded, setThemeLoaded] = useState(false)
+
+  useEffect(() => {
+    const options = loadTheme()
+    const theme = generateTheme(options)
+    applyTheme(theme, options.mode)
+    setThemeLoaded(true)
+  }, [])
+
+  if (loading || !themeLoaded) {
     return (
       <div className="loading-wrap">
         <div>

@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
 import { supabase, type Task } from '../lib/supabase'
 import { useAuth } from '../lib/auth'
+import { loadTheme, saveTheme, type ThemeOptions } from '../lib/theme'
 import TaskCard from './TaskCard'
 import TaskForm from './TaskForm'
+import ThemePicker from './ThemePicker'
 
 type Filter = 'all' | 'todo' | 'in_progress' | 'done'
 
@@ -15,6 +17,7 @@ export default function Dashboard() {
   const [formOpen, setFormOpen] = useState(false)
   const [editing, setEditing] = useState<Task | null>(null)
   const [toast, setToast] = useState<{ msg: string; error?: boolean } | null>(null)
+  const [theme, setTheme] = useState<ThemeOptions>(() => loadTheme())
 
   const flash = (msg: string, error?: boolean) => {
     setToast({ msg, error })
@@ -115,6 +118,7 @@ export default function Dashboard() {
           TaskFlow
         </div>
         <div className="header-actions">
+          <ThemePicker currentTheme={theme} onThemeChange={(t) => { saveTheme(t); setTheme(t); }} />
           <div className="user-chip">
             <span className="avatar">{initials}</span>
             <strong>{user?.email}</strong>
@@ -141,7 +145,7 @@ export default function Dashboard() {
 
         <div className="stats">
           <div className="stat-card">
-            <div className="stat-icon" style={{ background: 'rgba(14,165,233,0.15)', color: '#7dd3fc' }}>
+            <div className="stat-icon" style={{ background: 'var(--primary-soft)', color: 'var(--primary-300)' }}>
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                 <rect x="3" y="4" width="18" height="18" rx="2" />
                 <path d="M16 2v4M8 2v4M3 10h18" />
@@ -153,7 +157,7 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="stat-card">
-            <div className="stat-icon" style={{ background: 'rgba(100,116,139,0.15)', color: '#94a3b8' }}>
+            <div className="stat-icon" style={{ background: 'var(--primary-soft)', color: 'var(--muted-foreground)' }}>
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                 <circle cx="12" cy="12" r="9" />
               </svg>
@@ -164,7 +168,7 @@ export default function Dashboard() {
             </div>
           </div>
           <div className="stat-card">
-            <div className="stat-icon" style={{ background: 'rgba(14,165,233,0.15)', color: '#38bdf8' }}>
+            <div className="stat-icon" style={{ background: 'var(--accent-soft)', color: 'var(--accent-500)' }}>
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
                 <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
               </svg>
