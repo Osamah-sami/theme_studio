@@ -189,9 +189,9 @@ html[data-theme-studio] .search-bar .form-control:focus {
 html[data-theme-studio] .awesomplete > ul {
 	background-color: var(--ts-popover);
 	color: var(--ts-popover-foreground);
-	border: 1px solid var(--ts-border);
+	/*border: 1px solid var(--ts-border);*/
 	border-radius: var(--ts-radius);
-	box-shadow: var(--ts-shadow-lg);
+	/*box-shadow: var(--ts-shadow-lg);*/
 }
 html[data-theme-studio] .awesomplete > ul > li:hover,
 html[data-theme-studio] .awesomplete > ul > li[aria-selected="true"] {
@@ -354,7 +354,7 @@ html[data-theme-studio] .btn-primary:focus {
 
 html[data-theme-studio] .btn-default,
 html[data-theme-studio] .btn-secondary {
-	background-color: var(--ts-card);
+/*	background-color: var(--ts-card);*/
 	border: 1px solid var(--ts-border);
 	color: var(--ts-foreground);
 }
@@ -386,9 +386,9 @@ html[data-theme-studio] .like-disabled-input,
 html[data-theme-studio] select.form-control,
 html[data-theme-studio] .ql-container,
 html[data-theme-studio] .ace_editor {
-	background-color: var(--ts-background);
+	/*background-color: var(--ts-background);*/
 	border: 1px solid var(--ts-input);
-	border-radius: var(--ts-radius);
+	/*border-radius: var(--ts-radius);*/
 	color: var(--ts-foreground);
 	box-shadow: none;
 }
@@ -442,7 +442,7 @@ html[data-theme-studio] .list-row-container,
 html[data-theme-studio] .list-row-head,
 html[data-theme-studio] .report-wrapper,
 html[data-theme-studio] .frappe-list {
-	background-color: var(--ts-card);
+	/*background-color: var(--ts-card);*/
 	border-color: var(--ts-border);
 	color: var(--ts-card-foreground);
 }
@@ -635,7 +635,7 @@ html[data-theme-studio] .indicator-pill,
 html[data-theme-studio] .badge {
 	border-radius: 9999px;
 	font-weight: 500;
-	border: 1px solid var(--ts-border);
+	/*border: 1px solid var(--ts-border);*/
 }
 html[data-theme-studio] .tag-pill,
 html[data-theme-studio] .data-pill {
@@ -701,6 +701,7 @@ html[data-theme-studio] .modal-footer {
 html[data-theme-studio] .modal-backdrop.show {
 	background-color: color-mix(in srgb, var(--ts-foreground) 45%, transparent);
 	backdrop-filter: blur(3px);
+	  opacity: 1;
 }
 html[data-theme-studio] .modal-title {
 	color: var(--ts-popover-foreground);
