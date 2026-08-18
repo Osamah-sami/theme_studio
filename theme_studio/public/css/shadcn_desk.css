@@ -176,7 +176,7 @@ html[data-theme-studio] #navbar-search,
 html[data-theme-studio] .search-bar .form-control,
 html[data-theme-studio] .navbar .search-bar input {
 	background-color: var(--ts-secondary);
-	border: 1px solid var(--ts-border);
+	/*border: 1px solid var(--ts-border);*/
 	border-radius: var(--ts-radius);
 	color: var(--ts-foreground);
 }
@@ -186,13 +186,22 @@ html[data-theme-studio] .search-bar .form-control:focus {
 	border-color: var(--ts-ring);
 	box-shadow: var(--ts-ring-shadow);
 }
+html[data-theme-studio] .awesomplete [role="listbox"],
 html[data-theme-studio] .awesomplete > ul {
 	background-color: var(--ts-popover);
 	color: var(--ts-popover-foreground);
-	/*border: 1px solid var(--ts-border);*/
+	border: none !important;
 	border-radius: var(--ts-radius);
-	/*box-shadow: var(--ts-shadow-lg);*/
+	box-shadow: none !important;
 }
+html[data-theme-studio] .awesomplete [role="listbox"] > li,
+html[data-theme-studio] .awesomplete > li,
+html[data-theme-studio] .awesomplete [role="listbox"] > [role="option"] {
+	border: none !important;
+	box-shadow: none !important;
+}
+html[data-theme-studio] .awesomplete [role="listbox"] > li:hover,
+html[data-theme-studio] .awesomplete [role="listbox"] > li[aria-selected="true"],
 html[data-theme-studio] .awesomplete > ul > li:hover,
 html[data-theme-studio] .awesomplete > ul > li[aria-selected="true"] {
 	background-color: var(--ts-accent);
@@ -284,9 +293,9 @@ html[data-theme-studio] .dashboard-section,
 html[data-theme-studio] .number-card,
 html[data-theme-studio] .chart-container {
 	background-color: var(--ts-card);
-	border: 1px solid var(--ts-border);
+	/*border: 1px solid var(--ts-border);*/
 	border-radius: var(--ts-radius);
-	box-shadow: var(--ts-shadow-sm);
+	/*box-shadow: var(--ts-shadow-sm);*/
 	color: var(--ts-card-foreground);
 }
 
@@ -334,6 +343,21 @@ html[data-theme-studio] .btn {
 html[data-theme-studio] .btn:active {
 	transform: translateY(0.5px) scale(0.99);
 }
+
+html[data-theme-studio] .btn.btn-primary:active, div#driver-popover-item .driver-popover-footer button.btn-primary:active, div#driver-popover-item .driver-popover-footer button.driver-next-btn:active {
+ color: var(--ts-primary-foreground);
+ border-color: var(--ts-primary);
+}
+
+html[data-theme-studio] .btn.btn-danger, div#driver-popover-item .driver-popover-footer button.btn-danger {
+  background-color: var(--ts-primary);
+  color: #fff;
+}
+html[data-theme-studio] .btn:active, div#driver-popover-item .driver-popover-footer button:active {
+  color: var(--ts-primary-foreground) !important;
+  background-color: var(--ts-primary) !important;
+  box-shadow: var(--ts-border);
+}
 html[data-theme-studio] .btn:focus-visible {
 	outline: none;
 	box-shadow: var(--ts-ring-shadow);
@@ -354,7 +378,7 @@ html[data-theme-studio] .btn-primary:focus {
 
 html[data-theme-studio] .btn-default,
 html[data-theme-studio] .btn-secondary {
-/*	background-color: var(--ts-card);*/
+/*	background-color: transparent;*/
 	border: 1px solid var(--ts-border);
 	color: var(--ts-foreground);
 }
@@ -386,9 +410,9 @@ html[data-theme-studio] .like-disabled-input,
 html[data-theme-studio] select.form-control,
 html[data-theme-studio] .ql-container,
 html[data-theme-studio] .ace_editor {
-	/*background-color: var(--ts-background);*/
-	border: 1px solid var(--ts-input);
-	/*border-radius: var(--ts-radius);*/
+	/*background-color: transparent;*/
+	/*border: 1px solid var(--ts-input);*/
+	/*border-radius: 0;*/
 	color: var(--ts-foreground);
 	box-shadow: none;
 }
@@ -442,7 +466,7 @@ html[data-theme-studio] .list-row-container,
 html[data-theme-studio] .list-row-head,
 html[data-theme-studio] .report-wrapper,
 html[data-theme-studio] .frappe-list {
-	/*background-color: var(--ts-card);*/
+	/*background-color: transparent;*/
 	border-color: var(--ts-border);
 	color: var(--ts-card-foreground);
 }
@@ -464,7 +488,7 @@ html[data-theme-studio] .list-subject a {
 html[data-theme-studio] .filter-selector .btn,
 html[data-theme-studio] .sort-selector .btn,
 html[data-theme-studio] .filter-button {
-	background-color: var(--ts-card);
+	/*background-color: var(--ts-card);*/
 	border: 1px solid var(--ts-border);
 	color: var(--ts-muted-foreground);
 }
@@ -596,7 +620,7 @@ html[data-theme-studio] .tree .tree-node.active > .tree-link {
 /* ---- Timeline / activity / comments ------------------------------------ */
 html[data-theme-studio] .new-timeline .timeline-item .timeline-content {
 	background-color: var(--ts-card);
-	border: 1px solid var(--ts-border);
+	/*border: 1px solid var(--ts-border);*/
 	border-radius: var(--ts-radius);
 	color: var(--ts-card-foreground);
 }
@@ -611,7 +635,7 @@ html[data-theme-studio] .timeline-line {
 html[data-theme-studio] .comment-input-wrapper,
 html[data-theme-studio] .comment-box {
 	background-color: var(--ts-card);
-	border: 1px solid var(--ts-border);
+	/*border: 1px solid var(--ts-border);*/
 	border-radius: var(--ts-radius);
 }
 
@@ -635,7 +659,7 @@ html[data-theme-studio] .indicator-pill,
 html[data-theme-studio] .badge {
 	border-radius: 9999px;
 	font-weight: 500;
-	/*border: 1px solid var(--ts-border);*/
+	border: none;
 }
 html[data-theme-studio] .tag-pill,
 html[data-theme-studio] .data-pill {
@@ -775,7 +799,7 @@ html[data-theme-studio] .alert {
 /* ---- Links & primary accents ------------------------------------------- */
 html[data-theme-studio] a,
 html[data-theme-studio] .text-primary {
-	color: var(--ts-primary);
+/*	color: var(--ts-primary);*/
 }
 html[data-theme-studio] a:hover {
 	color: color-mix(in srgb, var(--ts-primary) 85%, var(--ts-foreground));
@@ -818,4 +842,18 @@ html[data-theme-studio] ::-webkit-scrollbar-track {
 html[data-theme-studio] ::selection {
 	background-color: color-mix(in srgb, var(--ts-primary) 25%, transparent);
 	color: var(--ts-foreground);
+}
+
+/* Checkbox / switch / radio */
+html[data-theme-studio] input[type="checkbox"],
+html[data-theme-studio] input[type="radio"] {
+	accent-color: var(--ts-primary);
+}
+
+/* ---- form-tabs-list ---------------------------------------------------------- */
+html[data-theme-studio] .form-tabs-list .form-tabs .nav-item .nav-link.active {
+  font-weight: 400;
+  border-bottom: 1px solid var(--ts-primary);
+  color: var(--ts-primary);
+  padding-bottom: 9px;
 }

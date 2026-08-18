@@ -396,11 +396,11 @@ html[data-theme-studio] .ts-rail-top::-webkit-scrollbar-thumb {
    2. Sidebar panel (the "large" sidebar) — Frappe v16 `.body-sidebar`
    ========================================================================= */
 html[data-theme-studio] .body-sidebar {
-	background-color: var(--ts-sidebar) !important;
-	border-right: 1px solid var(--ts-sidebar-border) !important;
+	/*background-color: var(--ts-sidebar) !important;*/
+	/*border-right: 1px solid var(--ts-sidebar-border) !important;*/
 	color: var(--ts-sidebar-foreground);
-	padding: 14px 12px;
-	gap: 4px;
+	/*padding: 14px 12px;*/
+	/*gap: 4px;*/
 }
 
 html[data-theme-studio] .body-sidebar-container.expanded .body-sidebar {
@@ -413,7 +413,7 @@ html[data-theme-studio] .body-sidebar .sidebar-header {
 	transition: background-color 0.15s var(--ts-ease);
 }
 html[data-theme-studio] .body-sidebar .sidebar-header:hover {
-	background-color: var(--ts-sidebar-accent);
+	/*background-color: var(--ts-sidebar-accent);*/
 }
 html[data-theme-studio] .body-sidebar .header-title {
 	color: var(--ts-sidebar-foreground) !important;
@@ -432,11 +432,11 @@ html[data-theme-studio] .body-sidebar .standard-sidebar-item {
 	margin: 0 0 1px;
 }
 html[data-theme-studio] .body-sidebar .standard-sidebar-item .item-anchor {
-	height: 36px;
-	padding: 0 10px;
+	/*height: 30px;*/
+	/*padding: 0 10px;*/
 	border-radius: var(--ts-radius);
 	color: color-mix(in srgb, var(--ts-sidebar-foreground) 75%, transparent) !important;
-	gap: 8px;
+	/*gap: 8px;*/
 	transition: background-color 0.15s var(--ts-ease), color 0.15s var(--ts-ease);
 }
 
